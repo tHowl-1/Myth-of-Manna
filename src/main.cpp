@@ -2,6 +2,7 @@
 
 // Console width and height
 const int CON_W = 80, CON_H = 45;
+const int SCREEN_W = 1280, SCREEN_H = 720;
 
 // Doom color palette
 int doom_colors[36][3] = {
@@ -48,6 +49,8 @@ int main(int argc, char* argv[]) {
     auto params = TCOD_ContextParams{};
     params.tcod_version = TCOD_COMPILEDVERSION;  // This is required.
     params.window_title = "Collaborative Roguelike Project";
+    params.pixel_width = SCREEN_W;
+    params.pixel_height = SCREEN_H;
     params.sdl_window_flags = SDL_WINDOW_RESIZABLE;
     params.vsync = true;
     params.renderer_type = TCOD_RENDERER_SDL2; // Render using SDL2
@@ -70,15 +73,15 @@ int main(int argc, char* argv[]) {
     while (true) {  // Game loop.
         TCOD_console_clear(console.get());
 
-        // Update simulation
+        // Update and render simulation
         for (int x = 0; x < CON_W; x++)
+        {
             for (int y = 1; y < CON_H; y++) // y = 1 because top line cannot be pushed to outside buffer
+            {
                 sim_buffer[std::min(CON_W - 1, std::max(0, x + rand() % 3 - 1))][y - 1] = std::max(0, sim_buffer[x][y] + rand() % 3 - 2);
-
-        // Render simulation
-        for (int x = 0; x < CON_W; x++)
-            for (int y = 0; y < CON_H; y++)
                 console.at({ x, y }).bg = tcod::ColorRGB(doom_colors[sim_buffer[x][y]][0], doom_colors[sim_buffer[x][y]][1], doom_colors[sim_buffer[x][y]][2]);
+            }
+        }
 
         context->present(console);  // Updates the visible display.
 
