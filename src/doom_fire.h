@@ -1,4 +1,4 @@
-#include <libtcod.hpp>
+#include <libtcod.hpp> // Necessary for rendering
 
 // Doom color palette
 int doom_colors[36][3] = {
@@ -41,27 +41,35 @@ int doom_colors[36][3] = {
 };
 
 class Doom_Fire {
+    /*
+    * 
+    *   Basic class to store and render example doom fire simulation:
+    * 
+    *   -sim_buffer- screen size array to store relative brightness of each fire pixel (0 = darkest color, 35 = brightest color)
+    *   -console- reference to active console to ease rendering
+    * 
+    *   *This could later be upgraded to use a general class that describes many simulations 
+    * 
+    */
 private:
-    // Fire simulation buffer array
-    int sim_buffer[CON_W][CON_H] = { 0 }; // 0 = darkest color, 35 = brightest color
+    int sim_buffer[CON_W][CON_H] = { 0 };
     TCOD_Console console;
 public:
     Doom_Fire(TCOD_Console& new_console)
     {
         console = new_console;
         for (int i = 0; i < CON_W; i++)
-            sim_buffer[i][CON_H - 1] = 35; // Bottom screen line set to always max brightness
+            sim_buffer[i][CON_H - 1] = 35; // Bottom screen line set to always be max brightness
     }
 
-    // Update and render simulation
     void update()
     {
         for (int x = 0; x < CON_W; x++)
         {
             for (int y = 1; y < CON_H; y++) // y = 1 because top line cannot be pushed to outside buffer
             {
-                sim_buffer[std::min(CON_W - 1, std::max(0, x + rand() % 3 - 1))][y - 1] = std::max(0, sim_buffer[x][y] + rand() % 3 - 2);
-                console.at({ x, y }).bg = tcod::ColorRGB(doom_colors[sim_buffer[x][y]][0], doom_colors[sim_buffer[x][y]][1], doom_colors[sim_buffer[x][y]][2]);
+                sim_buffer[std::min(CON_W - 1, std::max(0, x + rand() % 3 - 1))][y - 1] = std::max(0, sim_buffer[x][y] + rand() % 3 - 2);   // Update simulation
+                console.at({ x, y }).bg = tcod::ColorRGB(doom_colors[sim_buffer[x][y]][0], doom_colors[sim_buffer[x][y]][1], doom_colors[sim_buffer[x][y]][2]); // Render simulation using color palette
             }
         }
     }

@@ -1,16 +1,15 @@
 #pragma once
 
-// Constants FIXME don't leave these here forever
-// Console width and height
-const int CON_W = 80, CON_H = 45;
+// 16:9 aspect ratio, console/screem width and height in cells/pixels respectively - TODO Move constants into some engine class
+const int CON_W = 80, CON_H = 45; 
 const int SCREEN_W = 1280, SCREEN_H = 720;
 
-// Standard libraries
+// Standard
 #include <iostream>
 
 // libtcod
 #include <libtcod.hpp>
-#include <SDL.h>
+#include <SDL2/SDL.h>
 
-// Other
+// Engine
 #include "doom_fire.h"
