@@ -28,7 +28,7 @@ int main(int argc, char* argv[]) {
     while (true) {  // Game loop.
         TCOD_console_clear(console.get());
 
-        //simulation.update() // update doom fire
+        //simulation.update(); // update doom fire
 
         // render player
         tcod::print(console, { player_x, player_y }, "@", { {255, 255, 255} }, { {0, 0, 0} });
