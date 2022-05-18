@@ -6,7 +6,6 @@ class Entity;
 // Dependancies
 #include <vector>
 
-
 namespace crp
 {
 	/*
@@ -30,7 +29,7 @@ namespace crp
 	//Entity and GameMap container
 	//class GameWorld
 
-	//Entity container
+	//Entity container (maybe stored in map / unordered_map instead of vector)
 	//class Inventory
 	
 }

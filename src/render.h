@@ -14,10 +14,13 @@ namespace crp
 	class TileRender
 	{
 	public:
+		// Pointer to active console to draw onto
 		TCOD_Console* console;
 
 		TileRender(TCOD_Console* console) : console(console){};
 
 		void draw_entities(Scene* scene);
+		
+		// TODO - draw_text(), draw_tiles()
 	};
 }

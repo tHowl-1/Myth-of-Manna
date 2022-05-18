@@ -5,29 +5,44 @@
 
 namespace crp
 {
-	//Base action
+	// Base action
 	class Action
 	{
 	public:
-		Entity* performer;
-		Action(Entity* entity) : performer(entity) {}
-
-		virtual void perform();
+		virtual int perform();
 	};
 
-	class ActionWithDirection : public Action
+	// Action that was performed by an entity
+	class EntityAction : public Action
+	{
+	public:
+		Entity* performer;
+		EntityAction(Entity* entity) : performer(entity) {}
+	};
+
+	// EntityAction with a relative direction (dx, dy)
+	class ActionWithDirection : public EntityAction
 	{
 	public:
 		int dx;
 		int dy;
 
-		ActionWithDirection(Entity* entity, int dx, int dy) : Action(entity), dx(dx), dy(dy) {}
+		ActionWithDirection(Entity* entity, int dx, int dy) : EntityAction(entity), dx(dx), dy(dy) {}
 	};
 
+	// Entity movement action in a given direction
 	class MovementAction : public ActionWithDirection
 	{
 	public:
 		MovementAction(Entity* entity, int dx, int dy) : ActionWithDirection(entity, dx, dy) {}
-		void perform();
+		int perform();
 	};
+
+	// Quits the game
+	class QuitAction : public Action
+	{
+	public:
+		int perform();
+	};
+
 }

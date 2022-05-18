@@ -2,7 +2,3 @@
 //
 //using namespace crp;
 //
-//GameMap::GameMap()
-//{
-//
-//}

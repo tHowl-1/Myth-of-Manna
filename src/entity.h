@@ -13,9 +13,9 @@ namespace crp
 		int x;
 		int y;
 		std::string ch;
-		tcod::ColorRGB color;
+		const tcod::ColorRGB* color; // TODO - If we want dynamic coloring this will have to be non-const and not a pointer...
 
-		Entity(int x, int y, std::string ch, tcod::ColorRGB col) : x(x), y(y), ch(ch), color(col){}
+		Entity(int x, int y, std::string ch, const tcod::ColorRGB* col) : x(x), y(y), ch(ch), color(col){}
 	};
 
 	//class Actor : public Entity
