@@ -1,12 +1,11 @@
 #pragma once
 
-// Forward Declarations
-#include "entity.h"
-#include "scene.h"
 
 // Dependancies
+#include <string>
 #include <libtcod.hpp>
-
+#include "entity.h"
+#include "scene.h"
 
 namespace crp
 {
@@ -20,7 +19,9 @@ namespace crp
 		TileRender(TCOD_Console* console) : console(console){};
 
 		void draw_entities(Scene* scene);
+
+		void draw_tiles(GameMap* map);
 		
-		// TODO - draw_text(), draw_tiles()
+		void draw_text(std::string text, int x, int y);
 	};
 }

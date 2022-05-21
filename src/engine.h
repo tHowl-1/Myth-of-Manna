@@ -6,6 +6,7 @@
 
 #include "entity.h"
 #include "render.h"
+#include "validate.h"
 #include "state_handling.h"
 #include "scene.h"
 
@@ -27,7 +28,7 @@ namespace crp
 		Entity* player;
 		TileRender* render;
 		BaseHandler* activeHandler;
-		Scene* activeScene; // TODO - Replace with gamemap and subsequently gameworld later on
+		GameMap* activeScene;
 
 		bool QUIT_FLAG = false;
 
@@ -35,7 +36,7 @@ namespace crp
 
 		~Engine();
 
-		void validate_action(Action* action);
+		void validate_action(ActionOrHandler* action);
 
 		void update();
 		

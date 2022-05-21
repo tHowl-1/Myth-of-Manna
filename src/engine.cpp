@@ -25,10 +25,10 @@ Engine::Engine()
 	
 	context = tcod::new_context(params);
 
-	player = new Entity(CON_W / 2, CON_H / 2, "☺", &WHITE);
+	player = new Entity(CON_W / 2, CON_H / 2, 0x263A, WHITE); // ☺
 	render = new TileRender(console.get());
 	activeHandler = new MainGameHandler();
-	activeScene = new Scene(player);
+	activeScene = new GameMap(player);
 }
 
 Engine::~Engine()
@@ -40,24 +40,28 @@ Engine::~Engine()
 }
 
 // TODO - Make private (along with everything else in this project that can be and add getters and setters if needed)
-void Engine::validate_action(Action* action)
+void Engine::validate_action(ActionOrHandler* action)
 {
-	switch (action->perform()) 
+	if (!action->isAction) // Handler
 	{
-		case 0: // Valid action
+		delete activeHandler;
+		activeHandler = action->actionOrHandler.handler; // Swap handler
+	}
+	else // Action
+	{
+		switch (action->actionOrHandler.action->perform()) // Perform Action
+		{
+		case Validate::VALID:
 			// TODO - ai moves here
 			break;
-		case 1: // Invalid action
+		case Validate::INVALID:
 			break;
-		case 2: // Quit
+		case Validate::QUIT: // Quit
 			QUIT_FLAG = true;
-			break;
-		case 3: // Switch the active handler
-			delete activeHandler;
-			// activeHandler = action->switch(); // TODO - Implement actions with this functionality
 			break;
 		default:
 			break;
+		}
 	}
 	delete action;
 }
@@ -72,6 +76,6 @@ void Engine::update()
 	SDL_WaitEvent(nullptr); //Optional, sleep until events are available (WARNING This is probably the source of pausing in realtime rendering)
 	while (SDL_PollEvent(&event)) {
 		context->convert_event_coordinates(event);  // Optional, converts pixel coordinates into tile coordinates (useful for mouse events)
-		validate_action(activeHandler->handle_events(&event, player));
+		validate_action(activeHandler->handle_events(&event, player, activeScene));
 	}
 }

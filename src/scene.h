@@ -5,6 +5,8 @@ class Entity;
 
 // Dependancies
 #include <vector>
+#include "tile_types.h"
+
 
 namespace crp
 {
@@ -24,7 +26,32 @@ namespace crp
 	};
 
 	//Entity and tile container
-	//class GameMap
+	class GameMap : public Scene
+	{
+	public:
+		const static int width = 80, height = 45;
+
+
+		Tile tiles[width][height] = {};
+		GameMap(Entity* player) : Scene(player)
+		{
+			// TODO - Replace with procedural generator
+			for (int i = 20; i < width - 20; i++)
+			{
+				for (int j = 10; j < height - 10; j++)
+				{
+					if (i == 20 || j == 10 || i == width - 21 || j == height - 11)
+					{
+						tiles[i][j] = wall;
+					}
+					else
+					{
+						tiles[i][j] = floor;
+					}
+				}
+			}
+		}
+	};
 	
 	//Entity and GameMap container
 	//class GameWorld

@@ -3,18 +3,38 @@
 using namespace crp;
 
 // Base
-Action* BaseHandler::handle_events(SDL_Event* event, Entity* player)
+ActionOrHandler* BaseHandler::handle_events(SDL_Event* event, Entity* player, GameMap* activeScene)
 {
-    return new Action(); // Always invalid
+    ActionOrHandler* action = new ActionOrHandler();
+    action->actionOrHandler.action = new Action();
+    action->isAction = true;
+    return action; // always invalid
 }
 
-void BaseHandler::on_render(TileRender* render, Scene* activeScene)
+void BaseHandler::on_render(TileRender* render, GameMap* activeScene)
 {
     return; // Render nothing
 }
 
+ActionOrHandler* BaseHandler::newHandler(BaseHandler* handler)
+{
+    ActionOrHandler* newAction = new ActionOrHandler();
+    newAction->actionOrHandler.handler = handler;
+    newAction->isAction = false;
+    return newAction;
+}
+
+ActionOrHandler* BaseHandler::newAction(Action* action)
+{
+    ActionOrHandler* newAction = new ActionOrHandler();
+    newAction->actionOrHandler.action = action;
+    newAction->isAction = true;
+    return newAction;
+}
+
+
 // MainGame
-Action* MainGameHandler::handle_events(SDL_Event* event, Entity* player)
+ActionOrHandler* MainGameHandler::handle_events(SDL_Event* event, Entity* player, GameMap* activeScene)
 {
     switch (event->type) {
         case SDL_KEYDOWN:
@@ -22,36 +42,37 @@ Action* MainGameHandler::handle_events(SDL_Event* event, Entity* player)
             {
             // Player movement
             case SDLK_UP:
-                return new MovementAction(player, 0, -1);
+                return newAction(new MovementAction(player, activeScene, 0, -1));
             case SDLK_DOWN:
-                return new MovementAction(player, 0, 1);
+                return newAction(new MovementAction(player, activeScene, 0, 1));
             case SDLK_LEFT:
-                return new MovementAction(player, -1, 0);
+                return newAction(new MovementAction(player, activeScene, -1, 0));
             case SDLK_RIGHT:
-                return new MovementAction(player, 1, 0);
-
+                return newAction(new MovementAction(player, activeScene, 1, 0));
             case SDLK_ESCAPE:
-                return new QuitAction();
+                return newHandler(new MainMenuHandler());
             default:
                 break;
             }
             break;
         case SDL_QUIT: // Exit the program on window close
-            return new QuitAction();
+            return newAction(new QuitAction());
         default:
             break;
     }
-    return new Action(); // Return invalid blank action
+    return newAction(new Action()); // Return invalid blank action
 }
 
-void MainGameHandler::on_render(TileRender* render, Scene* activeScene)
+void MainGameHandler::on_render(TileRender* render, GameMap* activeScene)
 {
+    render->draw_tiles(activeScene);
     render->draw_entities(activeScene);
+    render->draw_text("Game", 0, 0);
 	return;
 }
 
 // MainMenu
-Action* MainMenuHandler::handle_events(SDL_Event* event, Entity* player)
+ActionOrHandler* MainMenuHandler::handle_events(SDL_Event* event, Entity* player, GameMap* activeScene)
 {
     switch (event->type) {
     case SDL_KEYDOWN:
@@ -60,22 +81,24 @@ Action* MainMenuHandler::handle_events(SDL_Event* event, Entity* player)
         // TODO - Add menu options
 
         case SDLK_ESCAPE:
-            return new QuitAction();
+            return newHandler(new MainGameHandler());
         default:
             break;
         }
         break;
     case SDL_QUIT: // Exit the program on window close
-        return new QuitAction();
+        return newAction(new QuitAction());
     default:
         break;
     }
-    return new Action(); // Return invalid blank action
+    return newAction(new Action()); // Return invalid blank action
 }
 
-void MainMenuHandler::on_render(TileRender* render, Scene* activeScene)
+void MainMenuHandler::on_render(TileRender* render, GameMap* activeScene)
 {
     // TODO - Draw background
     // TODO - Draw menu text options (new, load, options, quit)
+    render->draw_text("Main Menu", 0, 0);
     return;
 }
+
