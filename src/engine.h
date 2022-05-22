@@ -4,6 +4,7 @@
 #include <libtcod.hpp>
 #include <SDL2/SDL.h>
 
+#include "cp_437.h"
 #include "entity.h"
 #include "render.h"
 #include "validate.h"

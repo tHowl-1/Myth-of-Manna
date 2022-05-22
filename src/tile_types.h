@@ -3,10 +3,11 @@
 // Dependancies
 #include "palette.h"
 #include "tile.h"
+#include "cp_437.h"
 
 namespace crp
 {
 	// TODO - Create codepoint dictionary
-	static Tile wall(false, 0x23, BROWN);		// #
-	static Tile floor(true, 0x2E, DK_GRAY);		// .
+	static Tile wall(false, ord("#"), BROWN);
+	static Tile floor(true, ord("."), DK_GRAY);
 }

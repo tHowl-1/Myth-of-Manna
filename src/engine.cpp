@@ -25,7 +25,7 @@ Engine::Engine()
 	
 	context = tcod::new_context(params);
 
-	player = new Entity(0, 0, 0x40, WHITE); // ☺
+	player = new Entity(0, 0, ord("@"), WHITE);
 	render = new TileRender(console.get());
 	activeHandler = new MainGameHandler();
 	activeScene = new GameMap(player);

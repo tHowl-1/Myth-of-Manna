@@ -36,11 +36,12 @@ namespace crp
 		Tile tiles[width][height] = {};
 		GameMap(Entity* player) : Scene(player)
 		{
+			// TODO - Replace with procedural generator
 			player->x = width / 2;
 			player->y = height / 2;
 			cameraX = player->x;
 			cameraY = player->y;
-			// TODO - Replace with procedural generator
+			
 			for (int i = 0; i < width ; i++)
 			{
 				for (int j = 0; j < height; j++)
