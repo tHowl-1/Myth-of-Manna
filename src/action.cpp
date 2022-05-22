@@ -1,5 +1,5 @@
 #include "action.h"
-#include <iostream>
+
 using namespace crp;
 
 Validate Action::perform()
