@@ -1,0 +1,11 @@
+
+
+Entity Components:
+	-ai
+	-light
+	-inventory
+	-consumable
+	-equippable
+	-body -> parts
+	-shape/material
+	

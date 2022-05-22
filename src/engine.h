@@ -36,7 +36,7 @@ namespace crp
 
 		~Engine();
 
-		void validate_action(ActionOrHandler* action);
+		void validate_action(ActionOrHandler* actionOrHandler);
 
 		void update();
 		

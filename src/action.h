@@ -31,14 +31,30 @@ namespace crp
 		int dx;
 		int dy;
 
-		ActionWithDirection(Entity* entity, GameMap* activeScene, int dx, int dy) : EntityAction(entity, activeScene), dx(dx), dy(dy) {}
+		ActionWithDirection(Entity* performer, GameMap* activeScene, int dx, int dy) : EntityAction(performer, activeScene), dx(dx), dy(dy) {}
+	};
+
+	// Moves camera by (dx, dy)
+	class CameraMovementAction : public ActionWithDirection
+	{
+	public:
+		CameraMovementAction(Entity* performer, GameMap* activeScene, int dx, int dy) : ActionWithDirection(performer, activeScene, dx, dy) {}
+		Validate perform();
 	};
 
 	// Entity movement action in a given direction
 	class MovementAction : public ActionWithDirection
 	{
 	public:
-		MovementAction(Entity* entity, GameMap* activeScene, int dx, int dy) : ActionWithDirection(entity, activeScene, dx, dy) {}
+		MovementAction(Entity* performer, GameMap* activeScene, int dx, int dy) : ActionWithDirection(performer, activeScene, dx, dy) {}
+		Validate perform();
+	};
+
+	// Toggle Camera lock on and off
+	class CameraLockAction : public EntityAction
+	{
+	public:
+		CameraLockAction(Entity* performer, GameMap* activeScene) : EntityAction(performer, activeScene) {}
 		Validate perform();
 	};
 

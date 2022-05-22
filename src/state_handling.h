@@ -6,6 +6,7 @@ class GameMap;
 // Dependancies
 #include <libtcod.hpp>
 #include <SDL2/SDL.h>
+#include <unordered_map>
 
 #include "entity.h"
 #include "render.h"

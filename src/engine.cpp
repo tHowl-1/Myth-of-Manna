@@ -25,7 +25,7 @@ Engine::Engine()
 	
 	context = tcod::new_context(params);
 
-	player = new Entity(CON_W / 2, CON_H / 2, 0x263A, WHITE); // ☺
+	player = new Entity(0, 0, 0x263A, WHITE); // ☺
 	render = new TileRender(console.get());
 	activeHandler = new MainGameHandler();
 	activeScene = new GameMap(player);
@@ -40,16 +40,16 @@ Engine::~Engine()
 }
 
 // TODO - Make private (along with everything else in this project that can be and add getters and setters if needed)
-void Engine::validate_action(ActionOrHandler* action)
+void Engine::validate_action(ActionOrHandler* actionOrHandler)
 {
-	if (!action->isAction) // Handler
+	if (!actionOrHandler->isAction) // Handler
 	{
 		delete activeHandler;
-		activeHandler = action->actionOrHandler.handler; // Swap handler
+		activeHandler = actionOrHandler->actionOrHandler.handler; // Swap handler
 	}
 	else // Action
 	{
-		switch (action->actionOrHandler.action->perform()) // Perform Action
+		switch (actionOrHandler->actionOrHandler.action->perform()) // Perform Action
 		{
 		case Validate::VALID:
 			// TODO - ai moves here
@@ -62,8 +62,9 @@ void Engine::validate_action(ActionOrHandler* action)
 		default:
 			break;
 		}
+		delete actionOrHandler->actionOrHandler.action;
 	}
-	delete action;
+	delete actionOrHandler;
 }
 
 void Engine::update()

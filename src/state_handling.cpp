@@ -49,6 +49,19 @@ ActionOrHandler* MainGameHandler::handle_events(SDL_Event* event, Entity* player
                 return newAction(new MovementAction(player, activeScene, -1, 0));
             case SDLK_RIGHT:
                 return newAction(new MovementAction(player, activeScene, 1, 0));
+
+            case SDLK_KP_8:
+                return newAction(new CameraMovementAction(player, activeScene, 0, -1));
+            case SDLK_KP_2:
+                return newAction(new CameraMovementAction(player, activeScene, 0, 1));
+            case SDLK_KP_4:
+                return newAction(new CameraMovementAction(player, activeScene, -1, 0));
+            case SDLK_KP_6:
+                return newAction(new CameraMovementAction(player, activeScene, 1, 0));
+
+            case SDLK_KP_5:
+                return newAction(new CameraLockAction(player, activeScene));
+
             case SDLK_ESCAPE:
                 return newHandler(new MainMenuHandler());
             default:

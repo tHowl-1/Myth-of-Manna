@@ -5,24 +5,39 @@
 using namespace crp;
 
 // Draw all entities in a scene
-void TileRender::draw_entities(Scene* scene)
+void TileRender::draw_entities(GameMap* map)
 {
-	for (Entity* entity : scene->entities)
+	int world_X, world_Y;
+	int screen_X, screen_Y;
+	for (Entity* entity : map->entities)
 	{
-		console->at(entity->x, entity->y).ch = entity->character;
-		console->at(entity->x, entity->y).fg = entity->color;
+		world_X = entity->x;
+		world_Y = entity->y;
+		screen_X = world_X - map->cameraX + (console->w / 2);
+		screen_Y = world_Y - map->cameraY + (console->h / 2);
+		if (inCamBounds(map, screen_X, screen_Y))
+		{
+			console->at(screen_X, screen_Y).ch = entity->character;
+			console->at(screen_X, screen_Y).fg = entity->color;
+		}
 	}
 }
 
 // Draw all tiles in a scene
 void TileRender::draw_tiles(GameMap* map)
 {
-	for (int i = 0; i < map->width; i++)
+	int world_X, world_Y;
+	for (int screen_X = 0; screen_X < console->w; screen_X++)
 	{
-		for (int j = 0; j < map->height; j++)
+		for (int screen_Y = 0; screen_Y < console->h; screen_Y++)
 		{
-			console->at(i, j).ch = map->tiles[i][j].character;
-			console->at(i, j).fg = map->tiles[i][j].color;
+			world_X = map->cameraX - (console->w / 2) + screen_X;
+			world_Y = map->cameraY - (console->h / 2) + screen_Y;
+			if (map->inBounds(world_X, world_Y))
+			{
+				console->at(screen_X, screen_Y).ch = map->tiles[world_X][world_Y].character;
+				console->at(screen_X, screen_Y).fg = map->tiles[world_X][world_Y].color;
+			}
 		}
 	}
 
@@ -32,4 +47,10 @@ void TileRender::draw_tiles(GameMap* map)
 void TileRender::draw_text(std::string text, int x, int y)
 {
 	tcod::print((*console), { x, y }, text, WHITE, BLACK);
+}
+
+bool TileRender::inCamBounds(GameMap* map, int x, int y)
+{
+	int screen_X = map->cameraX, screen_Y = map->cameraY;
+	return (x >= 0 && x <  console->w && y >= 0 && y <  console->h);
 }

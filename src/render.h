@@ -18,10 +18,12 @@ namespace crp
 
 		TileRender(TCOD_Console* console) : console(console){};
 
-		void draw_entities(Scene* scene);
+		void draw_entities(GameMap* map);
 
 		void draw_tiles(GameMap* map);
 		
 		void draw_text(std::string text, int x, int y);
+	private:
+		bool inCamBounds(GameMap* map, int x, int y);
 	};
 }

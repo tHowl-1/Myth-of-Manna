@@ -29,18 +29,23 @@ namespace crp
 	class GameMap : public Scene
 	{
 	public:
-		const static int width = 80, height = 45;
-
+		const static int width = 40, height = 25;
+		int cameraX = 0, cameraY = 0;
+		bool cameraLock = true;
 
 		Tile tiles[width][height] = {};
 		GameMap(Entity* player) : Scene(player)
 		{
+			player->x = width / 2;
+			player->y = height / 2;
+			cameraX = player->x;
+			cameraY = player->y;
 			// TODO - Replace with procedural generator
-			for (int i = 20; i < width - 20; i++)
+			for (int i = 0; i < width ; i++)
 			{
-				for (int j = 10; j < height - 10; j++)
+				for (int j = 0; j < height; j++)
 				{
-					if (i == 20 || j == 10 || i == width - 21 || j == height - 11)
+					if (i == 0 || j == 0 || i == width - 1 || j == height - 1)
 					{
 						tiles[i][j] = wall;
 					}
@@ -50,6 +55,12 @@ namespace crp
 					}
 				}
 			}
+		}
+
+		// Checks if an x, y coordinate is within the bounds of the map
+		bool inBounds(int x, int y)
+		{
+			return (x >= 0 && x < width&& y >= 0 && y < height);
 		}
 	};
 	
