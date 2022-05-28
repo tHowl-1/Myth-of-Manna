@@ -21,13 +21,13 @@ namespace crp
 	public:
 		virtual ActionOrHandler* handle_events(SDL_Event* event, Entity* player, GameMap* activeScene);
 
-		virtual void on_render(TileRender* render, GameMap* activeScene);
+		virtual void on_render(TileRender* render, GameMap* activeScene, Entity* player);
 	protected:
 		ActionOrHandler* newHandler(BaseHandler* handler);
 
 		ActionOrHandler* newAction(Action* action);
 	};
-
+	
 	// Union with action to provide allow changing active handler or returning an action
 	union ActionOrHandlerUnion
 	{
@@ -47,7 +47,7 @@ namespace crp
 	public:
 		ActionOrHandler* handle_events(SDL_Event* event, Entity* player, GameMap* activeScene);
 
-		void on_render(TileRender* render, GameMap* activeScene);
+		void on_render(TileRender* render, GameMap* activeScene, Entity* player);
 	};
 
 	// The game's main menu / title screen
@@ -56,6 +56,6 @@ namespace crp
 	public:
 		ActionOrHandler* handle_events(SDL_Event* event, Entity* player, GameMap* activeScene);
 
-		void on_render(TileRender* render, GameMap* activeScene);
+		void on_render(TileRender* render, GameMap* activeScene, Entity* player);
 	};	
 }

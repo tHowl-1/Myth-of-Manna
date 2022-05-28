@@ -7,7 +7,8 @@
 
 using namespace crp;
 
-int main(int argc, char* argv[]) {
+int main(int argc, char* argv[])
+{
     Engine engine;
     while (!engine.QUIT_FLAG) // Game loop
         engine.update();

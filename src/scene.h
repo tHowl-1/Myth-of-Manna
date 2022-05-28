@@ -5,8 +5,8 @@ class Entity;
 
 // Dependancies
 #include <vector>
+#include <random>
 #include "tile_types.h"
-
 
 namespace crp
 {
@@ -29,46 +29,61 @@ namespace crp
 	class GameMap : public Scene
 	{
 	public:
-		const static int width = 40, height = 25;
+		int width = 64, height = 64;
 		int cameraX = 0, cameraY = 0;
 		bool cameraLock = true;
 
-		Tile tiles[width][height] = {};
-		GameMap(Entity* player) : Scene(player)
+		Tile*** tiles;
+		GameMap(Entity* player, int w, int h) : Scene(player), width(w), height(h)
 		{
-			// TODO - Replace with procedural generator
 			player->x = width / 2;
 			player->y = height / 2;
 			cameraX = player->x;
 			cameraY = player->y;
-			
-			for (int i = 0; i < width ; i++)
+			tiles = new Tile**[w];
+			for (int i = 0; i < w; i++)
+				tiles[i] = new Tile*[h];
+
+			for (int i = 0; i < width; i++)
 			{
 				for (int j = 0; j < height; j++)
 				{
 					if (i == 0 || j == 0 || i == width - 1 || j == height - 1)
 					{
-						tiles[i][j] = wall;
+						tiles[i][j] = &wall;
 					}
 					else
 					{
-						tiles[i][j] = floor;
+					if (rand() % 10 == 0)
+						tiles[i][j] = &wall;
+					else
+						tiles[i][j] = &floor;
 					}
 				}
 			}
 		}
 
+		~GameMap()
+		{
+			for (int i = 0; i < width; i++)
+			{
+				delete[] tiles[i];
+			}
+			delete[] tiles;
+		}
+
 		// Checks if an x, y coordinate is within the bounds of the map
 		bool inBounds(int x, int y)
 		{
-			return (x >= 0 && x < width&& y >= 0 && y < height);
+			return (x >= 0 && x < width && y >= 0 && y < height);
 		}
 	};
 	
 	//Entity and GameMap container
-	//class GameWorld
+	/*class GameWorld : public Scene
+	{
+	public:
 
-	//Entity container (maybe stored in map / unordered_map instead of vector)
-	//class Inventory
+	}*/
 	
 }

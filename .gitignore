@@ -123,3 +123,5 @@ Temporary Items
 # Default build directory
 out
 /.vs/*
+/.vscode/*
+/build/*

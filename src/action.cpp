@@ -33,7 +33,7 @@ Validate CameraLockAction::perform()
 Validate MovementAction::perform()
 {
 	// Check collision
-	if (!map->tiles[entity->x + dx][entity->y + dy].walkable)
+	if (!(*map->tiles[entity->x + dx][entity->y + dy]).walkable)
 		return Validate::INVALID;
 
 	// Move player in given direction

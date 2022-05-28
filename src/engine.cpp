@@ -28,7 +28,7 @@ Engine::Engine()
 	player = new Entity(0, 0, ord("@"), WHITE);
 	render = new TileRender(console.get());
 	activeHandler = new MainGameHandler();
-	activeScene = new GameMap(player);
+	activeScene = new GameMap(player, 40, 40);
 }
 
 Engine::~Engine()
@@ -69,7 +69,7 @@ void Engine::validate_action(ActionOrHandler* actionOrHandler)
 
 void Engine::update()
 {
-	activeHandler->on_render(render, activeScene);
+	activeHandler->on_render(render, activeScene, player);
 	context->present(console);
 
 	TCOD_console_clear(console.get());

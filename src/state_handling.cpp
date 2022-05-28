@@ -11,7 +11,7 @@ ActionOrHandler* BaseHandler::handle_events(SDL_Event* event, Entity* player, Ga
     return action; // always invalid
 }
 
-void BaseHandler::on_render(TileRender* render, GameMap* activeScene)
+void BaseHandler::on_render(TileRender* render, GameMap* activeScene, Entity* player)
 {
     return; // Render nothing
 }
@@ -76,11 +76,11 @@ ActionOrHandler* MainGameHandler::handle_events(SDL_Event* event, Entity* player
     return newAction(new Action()); // Return invalid blank action
 }
 
-void MainGameHandler::on_render(TileRender* render, GameMap* activeScene)
+void MainGameHandler::on_render(TileRender* render, GameMap* activeScene, Entity* player)
 {
     render->draw_tiles(activeScene);
     render->draw_entities(activeScene);
-    render->draw_text("Game", 0, 0);
+    render->draw_screen_text("Game", 0, 0);
 	return;
 }
 
@@ -107,11 +107,11 @@ ActionOrHandler* MainMenuHandler::handle_events(SDL_Event* event, Entity* player
     return newAction(new Action()); // Return invalid blank action
 }
 
-void MainMenuHandler::on_render(TileRender* render, GameMap* activeScene)
+void MainMenuHandler::on_render(TileRender* render, GameMap* activeScene, Entity* player)
 {
     // TODO - Draw background
     // TODO - Draw menu text options (new, load, options, quit)
-    render->draw_text("Main Menu", 0, 0);
+    render->draw_screen_text("Main Menu", 0, 0);
     return;
 }
 
