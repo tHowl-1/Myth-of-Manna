@@ -1,23 +1,61 @@
 #pragma once
 
+// Forward Declarations
+// List of used components
+class Task;
+class Skills;
+
 // Dependancies
 #include <libtcod.hpp>
 #include <SDL2/SDL.h>
+
+const int MAX_MEMBERS = 6;
 
 namespace crp
 {
 	class Entity
 	{
 	public:
+		//Basic attributes
 		int x;
 		int y;
+
+		int dx = 0;
+		int dy = 0;
+
 		int character;
 		tcod::ColorRGB color;
+		bool solid;
 
-		Entity(int x, int y, int ch, const tcod::ColorRGB col) : x(x), y(y), character(ch), color(col){}
+		//Components
+		Task* task = nullptr;
+		Skills* skills = nullptr;
+
+		//Skills
+
+		Entity(int x, int y, int ch, const tcod::ColorRGB col, bool solid) : x(x), y(y), character(ch), color(col), solid(solid){}
+
+		void move(int dx, int dy);
 	};
 
-	//class Actor : public Entity
+	class Party
+	{
+	public:
+		Entity* partyMembers[MAX_MEMBERS];
+		bool inMap = false;
 
-	//class Item : public Entity
+		int x;
+		int y;
+
+		int dx = 0;
+		int dy = 0;
+
+		int character;
+		tcod::ColorRGB color;
+		bool solid;
+
+		Party();
+
+		void move(int dx, int dy);
+	};
 }

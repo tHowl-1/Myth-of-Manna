@@ -4,8 +4,11 @@
 // Dependancies
 #include <string>
 #include <libtcod.hpp>
+#include "cp_437.h"
 #include "entity.h"
 #include "scene.h"
+
+const int MAP_OFFSET = 2;
 
 namespace crp
 {
@@ -18,14 +21,27 @@ namespace crp
 
 		TileRender(TCOD_Console* console) : console(console){};
 
-		void draw_entities(GameMap* map);
+		// MAIN DRAWING FEATURES
 
-		void draw_tiles(GameMap* map);
-		
+		// Draws map entities
+		void draw_entities(Map* map);
+		// Draws world parties
+		void draw_parties(World* world);
+
+		// Draws map tiles
+		void draw_map_tiles(Map* map);
+		// Draws world tiles
+		void draw_world_tiles(World* world);
+
+		// Draws text at screen coords
 		void draw_screen_text(std::string text, int x, int y);
+		// Draws text at world coords
+		void draw_world_text(std::string text, int x, int y);
 
-		void draw_world_text(std::string text, GameMap* map, int x, int y);
-	private:
-		bool inCamBounds(GameMap* map, int x, int y);
+		// Draws menu position
+		void draw_menu_marker(int choice, int x, int y, int offset);
+
+		void draw_panel(int x, int y, int w, int h);
+
 	};
 }

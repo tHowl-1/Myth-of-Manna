@@ -1,11 +1,11 @@
 #pragma once
 
-// Forward dependencies
-class Entity;
+// Dependencies
+#include "../entity.h"
 
 class BaseComponent
 {
-    public:
+public:
     Entity* parent;
     
     BaseComponent(Entity* parent) : parent(parent) {}

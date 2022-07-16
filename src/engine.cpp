@@ -1,5 +1,5 @@
 ﻿#include "palette.h"
-
+#include <iostream>
 #include "engine.h"
 
 using namespace crp;
@@ -9,7 +9,7 @@ Engine::Engine()
 	// Configure the context
 	auto params = TCOD_ContextParams{};
 	params.tcod_version = TCOD_COMPILEDVERSION;
-	params.window_title = "Collaborative Roguelike Project";
+	params.window_title = "Rogelik";
 	params.pixel_width = SCREEN_W;
 	params.pixel_height = SCREEN_H;
 	params.sdl_window_flags = SDL_WINDOW_RESIZABLE;
@@ -25,31 +25,24 @@ Engine::Engine()
 	
 	context = tcod::new_context(params);
 
-	player = new Entity(0, 0, ord("@"), WHITE);
 	render = new TileRender(console.get());
-	activeHandler = new MainGameHandler();
-	activeScene = new GameMap(player, 40, 40);
+	activeHandler = new MainMenu();
+	activeWorld = new World(); // Blank world
 }
 
 Engine::~Engine()
 {
-	delete player;
 	delete render;
 	delete activeHandler;
-	delete activeScene;
+	delete activeWorld;
 }
 
 // TODO - Make private (along with everything else in this project that can be and add getters and setters if needed)
 void Engine::validate_action(ActionOrHandler* actionOrHandler)
 {
-	if (!actionOrHandler->isAction) // Handler
+	if (actionOrHandler->isAction) // Action
 	{
-		delete activeHandler;
-		activeHandler = actionOrHandler->actionOrHandler.handler; // Swap handler
-	}
-	else // Action
-	{
-		switch (actionOrHandler->actionOrHandler.action->perform()) // Perform Action
+		switch (actionOrHandler->action->perform()) // Perform Action
 		{
 		case Validate::VALID:
 			// TODO - ai moves here
@@ -62,21 +55,25 @@ void Engine::validate_action(ActionOrHandler* actionOrHandler)
 		default:
 			break;
 		}
-		delete actionOrHandler->actionOrHandler.action;
+		delete actionOrHandler->action;
+	}
+	if (actionOrHandler->isHandler) // Handler
+	{
+		delete activeHandler;
+		activeHandler = actionOrHandler->handler; // Swap handler
 	}
 	delete actionOrHandler;
 }
 
 void Engine::update()
 {
-	activeHandler->on_render(render, activeScene, player);
+	activeHandler->on_render(render, activeWorld, activeWorld->player);
 	context->present(console);
-
 	TCOD_console_clear(console.get());
 	SDL_Event event;
 	SDL_WaitEvent(nullptr); //Optional, sleep until events are available (WARNING This is probably the source of pausing in realtime rendering)
 	while (SDL_PollEvent(&event)) {
 		context->convert_event_coordinates(event);  // Optional, converts pixel coordinates into tile coordinates (useful for mouse events)
-		validate_action(activeHandler->handle_events(&event, player, activeScene));
+		validate_action(activeHandler->handle_events(&event, activeWorld->player, &activeWorld));
 	}
 }

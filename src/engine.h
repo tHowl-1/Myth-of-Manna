@@ -13,8 +13,8 @@
 
 // FIXME - Still not sure about where to put these constant values (maybe their own header file with the action enumerator?)
 // 16:9 aspect ratio, console/screem width and height in cells/pixels respectively
-const int CON_W = 80, CON_H = 45;
-const int SCREEN_W = 1280, SCREEN_H = 720;
+const int CON_W = 96, CON_H = 54;
+const int SCREEN_W = 1600, SCREEN_H = 900;
 
 namespace crp
 {
@@ -26,10 +26,10 @@ namespace crp
 		tcod::Console console;
 		tcod::ContextPtr context;
 
-		Entity* player;
+
 		TileRender* render;
 		BaseHandler* activeHandler;
-		GameMap* activeScene;
+		World* activeWorld;
 
 		bool QUIT_FLAG = false;
 

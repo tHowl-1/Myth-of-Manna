@@ -1,89 +1,69 @@
 #pragma once
 
-// Forward Declarations
-class Entity;
-
 // Dependancies
 #include <vector>
+#include <unordered_map>
 #include <random>
+#include "tile.h"
 #include "tile_types.h"
+#include "entity.h"
+
+const int TILED_SIZE = 50;
+const int MAX_ENTITIES = 256;
 
 namespace crp
 {
-	/*
-		Basic container class to store entities and adjacent data
-		
-		* Subclassing is used here because they will act similarly in management entity storage
-	*/
-	class Scene
+	class Params
 	{
 	public:
-		std::vector<Entity*> entities;
-		Scene(Entity* player)
-		{
-			entities.push_back(player);
-		}
+		// World Generation Paramaters:
+		bool isPlains = false;
+		bool isRock = false;
+
+		Params( bool isPlains, bool isRock) : isPlains(isPlains), isRock(isRock) {}
 	};
 
 	//Entity and tile container
-	class GameMap : public Scene
+	class Map
 	{
 	public:
-		int width = 64, height = 64;
-		int cameraX = 0, cameraY = 0;
-		bool cameraLock = true;
+		MapTile mapTiles[TILED_SIZE][TILED_SIZE];
+		// Monsters + Characters - in scene
+		std::vector<Entity*> activeEntities;
+		Map();
+		Map(WorldTile* parentTile);
 
-		Tile*** tiles;
-		GameMap(Entity* player, int w, int h) : Scene(player), width(w), height(h)
-		{
-			player->x = width / 2;
-			player->y = height / 2;
-			cameraX = player->x;
-			cameraY = player->y;
-			tiles = new Tile**[w];
-			for (int i = 0; i < w; i++)
-				tiles[i] = new Tile*[h];
+		// Gets an entity at the given location if it is movement blocking
+		Entity* get_blocking_entity(int x, int y);
+		bool inBounds(int x, int y);
+	};
 
-			for (int i = 0; i < width; i++)
-			{
-				for (int j = 0; j < height; j++)
-				{
-					if (i == 0 || j == 0 || i == width - 1 || j == height - 1)
-					{
-						tiles[i][j] = &wall;
-					}
-					else
-					{
-					if (rand() % 10 == 0)
-						tiles[i][j] = &wall;
-					else
-						tiles[i][j] = &floor;
-					}
-				}
-			}
-		}
-
-		~GameMap()
-		{
-			for (int i = 0; i < width; i++)
-			{
-				delete[] tiles[i];
-			}
-			delete[] tiles;
-		}
-
-		// Checks if an x, y coordinate is within the bounds of the map
-		bool inBounds(int x, int y)
-		{
-			return (x >= 0 && x < width && y >= 0 && y < height);
-		}
+	struct Region
+	{
+		Map* regionMap = nullptr;
+		WorldTile worldTile;
 	};
 	
 	//Entity and GameMap container
-	/*class GameWorld : public Scene
+	class World
 	{
 	public:
+		Entity* player; 
+		Party* playerParty;
+		Params* params;
+		Region regionTiles[TILED_SIZE][TILED_SIZE];
+		// Characters - metagame npcs
+		Entity* staticEntities[MAX_ENTITIES];
 
-	}*/
-	
+		World();
+		World(Entity* newPlayer, Params* newParams);
+
+		~World();
+ 
+		Map* get_map_at(int x, int y);
+		Map* get_active_map();
+		Party* get_blocking_party(int x, int y);
+		bool inBounds(int x, int y);
+	};	
 }
+
