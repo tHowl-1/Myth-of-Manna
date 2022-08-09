@@ -2,8 +2,12 @@
 
 // Forward Declarations
 // List of used components
-class Task;
-class Skills;
+class Ai;
+class Consumable;
+class Equippable;
+class Interactable;
+class Inventory;
+class Soul;
 
 // Dependancies
 #include <libtcod.hpp>
@@ -23,17 +27,27 @@ namespace crp
 		int dx = 0;
 		int dy = 0;
 
+		int health = 25;
+
+		int baseCharacter;
+		tcod::ColorRGB baseColor;
+
 		int character;
 		tcod::ColorRGB color;
+
 		bool solid;
 
 		//Components
-		Task* task = nullptr;
-		Skills* skills = nullptr;
+		Ai* ai = nullptr;
+		Consumable* consumable = nullptr;
+		Equippable* equippable = nullptr;
+		Inventory* inventory = nullptr;
+		Interactable* interactable = nullptr;
+		Soul* soul = nullptr;
 
 		//Skills
 
-		Entity(int x, int y, int ch, const tcod::ColorRGB col, bool solid) : x(x), y(y), character(ch), color(col), solid(solid){}
+		Entity(int x, int y, int ch, const tcod::ColorRGB col, bool solid) : x(x), y(y), baseCharacter(ch), character(ch), baseColor(col), color(col), solid(solid){}
 
 		void move(int dx, int dy);
 	};
