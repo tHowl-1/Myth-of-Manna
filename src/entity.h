@@ -1,55 +1,56 @@
 #pragma once
 
-// Forward Declarations
-// List of used components
-class Ai;
-class Consumable;
-class Equippable;
-class Interactable;
-class Inventory;
-class Soul;
-
 // Dependancies
 #include <libtcod.hpp>
 #include <SDL2/SDL.h>
 
+#include "event.h"
+
 const int MAX_MEMBERS = 6;
 
-namespace crp
+namespace mom
 {
 	class Entity
 	{
 	public:
-		//Basic attributes
-		int x;
-		int y;
-
-		int dx = 0;
-		int dy = 0;
-
-		int health = 25;
-
-		int baseCharacter;
-		tcod::ColorRGB baseColor;
-
-		int character;
-		tcod::ColorRGB color;
-
-		bool solid;
-
 		//Components
-		Ai* ai = nullptr;
-		Consumable* consumable = nullptr;
-		Equippable* equippable = nullptr;
-		Inventory* inventory = nullptr;
-		Interactable* interactable = nullptr;
-		Soul* soul = nullptr;
+		class Physics*		physics		= nullptr;
+		//Ai*			ai				= nullptr;
+		//Consumable*	consumable		= nullptr;
+		//Equippable*	equippable		= nullptr;
+		//Inventory*	inventory		= nullptr;
+		//Interactable* interactable	= nullptr;
+		//Soul*			soul			= nullptr;
+		class Render*		render		= nullptr;
 
-		//Skills
+		Entity(
+			Physics* physics,
+			//Ai* ai,
+			//Consumable* consumable,
+			//Equippable* equippable,
+			//Inventory* inventory,
+			//Interactable* interactable,
+			//Soul* soul,
+			Render* render)
+			:
+			physics(physics),
+			//ai(ai),
+			//consumable(consumable),
+			//equippable(equippable),
+			//inventory(inventory),
+			//interactable(interactable),
+			//soul(soul),
+			render(render)
+		{}
 
-		Entity(int x, int y, int ch, const tcod::ColorRGB col, bool solid) : x(x), y(y), baseCharacter(ch), character(ch), baseColor(col), color(col), solid(solid){}
+		~Entity()
+		{
+			delete physics;
+			delete render;
+		}
 
-		void move(int dx, int dy);
+		void eventPass(Event* actionEvent);
+
 	};
 
 	class Party

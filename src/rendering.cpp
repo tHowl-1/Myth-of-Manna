@@ -1,24 +1,27 @@
 ﻿#include "palette.h"
+#include "event.h"
 
-#include "render.h"
+#include "rendering.h"
 
-using namespace crp;
-
-
+using namespace mom;
 
 void TileRender::draw_entities(Map* map)
 {
 	int world_X, world_Y;
 	int screen_X, screen_Y;
+
 	for (Entity* entity : map->activeEntities)
 	{
-		world_X = entity->x;
-		world_Y = entity->y;
+		Event* renderEvent = new Event(RenderEvent);
+		entity->eventPass(renderEvent);
+		world_X = renderEvent->x;
+		world_Y = renderEvent->y;
 		screen_X = world_X + MAP_OFFSET;
 		screen_Y = world_Y + MAP_OFFSET;
 
-		console->at(screen_X, screen_Y).ch = entity->character;
-		console->at(screen_X, screen_Y).fg = entity->color;
+		console->at(screen_X, screen_Y).ch = renderEvent->character;
+		console->at(screen_X, screen_Y).fg = renderEvent->color;
+		delete renderEvent;
 	}
 }
 

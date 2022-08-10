@@ -5,7 +5,7 @@
 // Engine
 #include "engine.h"
 
-using namespace crp;
+using namespace mom;
 
 int main(int argc, char* argv[])
 {

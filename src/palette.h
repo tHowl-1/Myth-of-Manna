@@ -3,7 +3,7 @@
 
 #include <libtcod.hpp>
 
-namespace crp
+namespace mom
 {
 	// Wad's optimum 16 color palette:
 	const static tcod::ColorRGB BLACK{0, 0, 0};

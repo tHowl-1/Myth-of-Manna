@@ -4,7 +4,7 @@
 #include <libtcod.hpp>
 #include <SDL2/SDL.h>
 
-namespace crp
+namespace mom
 {
 	class Tile
 	{

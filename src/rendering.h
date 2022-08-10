@@ -10,7 +10,7 @@
 
 const int MAP_OFFSET = 2;
 
-namespace crp
+namespace mom
 {
 	// 2D Tile Renderer
 	class TileRender

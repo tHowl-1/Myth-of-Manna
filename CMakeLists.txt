@@ -10,7 +10,7 @@ if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
 endif()
 
 project(
-    CRP  # Project name, change this as needed.
+    MoM  # Project name, change this as needed.
     LANGUAGES C CXX
 )
 

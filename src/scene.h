@@ -11,7 +11,7 @@
 const int TILED_SIZE = 50;
 const int MAX_ENTITIES = 256;
 
-namespace crp
+namespace mom
 {
 	class Params
 	{
@@ -34,7 +34,7 @@ namespace crp
 		Map(WorldTile* parentTile);
 
 		// Gets an entity at the given location if it is movement blocking
-		Entity* get_blocking_entity(int x, int y);
+		void mapEventPass(Event* actionEvent);
 		bool inBounds(int x, int y);
 	};
 

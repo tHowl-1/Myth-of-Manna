@@ -1,11 +1,16 @@
 #include "entity.h"
 
-using namespace crp;
+#include "components/physics.h"
+#include "components/render.h"
 
-void Entity::move(int dx, int dy)
+using namespace mom;
+
+void Entity::eventPass(Event* actionEvent)
 {
-	x += dx;
-	y += dy;
+	if (physics != nullptr)
+		physics->receiveEvent(actionEvent);
+	if (render != nullptr)
+		render->receiveEvent(actionEvent);
 }
 
 void Party::move(int dx, int dy)

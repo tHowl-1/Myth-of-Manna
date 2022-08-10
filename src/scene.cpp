@@ -1,6 +1,6 @@
 #include "scene.h"
 
-using namespace crp;
+using namespace mom;
 
 // Checks if an x, y coordinate is within the bounds of the map
 bool Map::inBounds(int x, int y)
@@ -13,12 +13,10 @@ bool World::inBounds(int x, int y)
 	return (x >= 0 && x < TILED_SIZE&& y >= 0 && y < TILED_SIZE);
 }
 
-Entity* Map::get_blocking_entity(int x, int y)
+void Map::mapEventPass(Event* actionEvent)
 {
 	for (Entity* entity : activeEntities)
-		if (entity->x == x && entity->y == y && entity->solid)
-			return entity;
-	return nullptr;
+		entity->eventPass(actionEvent);
 }
 
 

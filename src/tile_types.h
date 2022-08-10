@@ -5,7 +5,7 @@
 #include "tile.h"
 #include "cp_437.h"
 
-namespace crp
+namespace mom
 {
 	static MapTile wall(false, ord("#"), BROWN);
 	static MapTile floor(true, ord("."), DK_GRAY);

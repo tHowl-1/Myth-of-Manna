@@ -10,10 +10,10 @@ class Map;
 #include <iostream>
 
 #include "entity.h"
-#include "render.h"
+#include "rendering.h"
 #include "action.h"
 
-namespace crp
+namespace mom
 {
 	// Game state handler. including: render state, input handling
 	struct ActionOrHandler;

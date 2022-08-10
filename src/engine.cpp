@@ -2,14 +2,14 @@
 #include <iostream>
 #include "engine.h"
 
-using namespace crp;
+using namespace mom;
 
 Engine::Engine()
 {
 	// Configure the context
 	auto params = TCOD_ContextParams{};
 	params.tcod_version = TCOD_COMPILEDVERSION;
-	params.window_title = "Rogelik";
+	params.window_title = "Myth of Manna";
 	params.pixel_width = SCREEN_W;
 	params.pixel_height = SCREEN_H;
 	params.sdl_window_flags = SDL_WINDOW_RESIZABLE;

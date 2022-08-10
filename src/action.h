@@ -3,9 +3,10 @@
 // Dependancies
 #include "validate.h"
 #include "entity.h"
+#include "event.h"
 #include "scene.h"
 
-namespace crp
+namespace mom
 {
 	// --------------------------------------------------------------------------
 	//                               GENERIC ACTIONS
@@ -94,10 +95,10 @@ namespace crp
 	class MapAction : public Action
 	{
 	public:
-		Entity* entity;
+		Entity* performer;
 		Map* map;
 
-		MapAction(Entity* performer, Map* activeMap) : entity(performer), map(activeMap) {}
+		MapAction(Entity* performer, Map* activeMap) : performer(performer), map(activeMap) {}
 	};
 
 	// Map action performed with a relative direction
@@ -108,6 +109,13 @@ namespace crp
 		int dy;
 
 		MapActionWithDirection(Entity* performer, Map* activeMap, int dx, int dy) : MapAction(performer, activeMap), dx(dx), dy(dy) {}
+	};
+
+	class PlaceTileAction : public MapAction
+	{
+	public:
+		PlaceTileAction(Entity* performer, Map* activeMap) : MapAction(performer, activeMap) {}
+		Validate perform();
 	};
 
 	// Entity movement action in a given direction
@@ -134,10 +142,5 @@ namespace crp
 		Validate perform();
 	};
 	
-	class PlaceTileAction : public MapActionWithDirection
-	{
-	public:
-		PlaceTileAction(Entity* performer, Map* activeMap, int dx, int dy) : MapActionWithDirection(performer, activeMap, dx, dy) {}
-		Validate perform();
-	};
+	
 }

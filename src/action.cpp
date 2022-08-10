@@ -1,6 +1,8 @@
 #include "action.h"
+#include "components/physics.h"
+#include "components/render.h"
 
-using namespace crp;
+using namespace mom;
 
 Validate Action::perform()
 {
@@ -9,19 +11,30 @@ Validate Action::perform()
 
 Validate MapMovementAction::perform()
 {
-	int dest_x = entity->x + dx, dest_y = entity->y + dy;
+	// Get Player Position
+	Event* positionEvent = new Event(PositionEvent);
+	performer->eventPass(positionEvent);
+	int dest_x = positionEvent->x + dx, dest_y = positionEvent->y + dy;
+	delete positionEvent;
+
 	// Check collision
+	Event* collideEvent = new Event(CollideEvent, dest_x, dest_y);
+	bool collideFail = false;
 	if (!map->inBounds(dest_x, dest_y))
-		return Validate::INVALID; // Out of bounds
+		collideFail = true;
 	if (!map->mapTiles[dest_x][dest_y].walkable)
-		return Validate::INVALID; // Blocked by a tile
-	if (map->get_blocking_entity(dest_x, dest_y) != nullptr)
+		collideFail = true;
+	map->mapEventPass(collideEvent);
+	if (!collideEvent->check)
+		collideFail = true;
+	delete collideEvent;
+	if (collideFail)
 		return Validate::INVALID;
 
 	// Move player in given direction
-	entity->move(dx, dy);
-	entity->dx = dx;
-	entity->dy = dy;
+	Event* movementEvent = new Event(MovementEvent, dest_x, dest_y, dx, dy);
+	map->mapEventPass(movementEvent);
+	delete movementEvent;
 	return Validate::VALID;
 }
 
@@ -43,7 +56,7 @@ Validate WorldMovementAction::perform()
 
 Validate WorldCreateAction::perform()
 {
-	Entity* player = new Entity(0, 0, ord("@"), WHITE, true);
+	Entity* player = new Entity(new Physics(0, 0, true), new Render(ord("@"), WHITE));
 	delete *world;
 	*world = new World(player, new Params(true, false));
 	return Validate::INVALID;
@@ -51,10 +64,7 @@ Validate WorldCreateAction::perform()
 
 Validate MeleeAction::perform()
 {
-	int dest_x = entity->x + dx, dest_y = entity->y + dy;
-	Entity* target = map->get_blocking_entity(dest_x, dest_y);
-	if (target == nullptr)
-		return Validate::INVALID;
+
 
 	// TODO - check currently held weapon
 	return Validate::VALID;
@@ -62,11 +72,11 @@ Validate MeleeAction::perform()
 
 Validate BumpAction::perform()
 {
-	int dest_x = entity->x + dx, dest_y = entity->y + dy;
-	if (map->get_blocking_entity(dest_x, dest_y))
-		return MeleeAction(entity, map, dx, dy).perform();
-	else
-		return MapMovementAction(entity, map, dx, dy).perform();
+	//int dest_x = entity->x + dx, dest_y = entity->y + dy;
+	//if (map->get_blocking_entity(dest_x, dest_y))
+	//	return MeleeAction(entity, map, dx, dy).perform();
+	//else
+	return MapMovementAction(performer, map, dx, dy).perform();
 }
 
 Validate QuitAction::perform()
@@ -91,7 +101,12 @@ Validate ExitMapAction::perform()
 
 Validate PlaceTileAction::perform()
 {
-	int dest_x = entity->x + dx, dest_y = entity->y + dy;
+	// Get Player Position and Direction
+	Event* positionEvent = new Event(PositionEvent);
+	performer->eventPass(positionEvent);
+	int dest_x = positionEvent->x + positionEvent->dx, dest_y = positionEvent->y + positionEvent->dy;
+	delete positionEvent;
+
 	map->mapTiles[dest_x][dest_y] = wall;
 	return Validate::INVALID;
 }

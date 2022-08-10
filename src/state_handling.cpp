@@ -1,6 +1,6 @@
 #include "state_handling.h"
 
-using namespace crp;
+using namespace mom;
 
 ActionOrHandler* BaseHandler::handle_events(SDL_Event* event, Entity* player, World** activeWorld)
 {
@@ -73,7 +73,7 @@ ActionOrHandler* MapView::handle_events(SDL_Event* event, Entity* player, World*
                 return newAction(new BumpAction(player, (*activeWorld)->get_active_map(), 1, 0));
 
             case SDLK_SPACE:
-                return newAction(new PlaceTileAction(player, (*activeWorld)->get_active_map(), player->dx, player->dy));
+                return newAction(new PlaceTileAction(player, (*activeWorld)->get_active_map()));
             case SDLK_RETURN:
                 return newActionHandler(new ExitMapAction((*activeWorld)->playerParty, *activeWorld), new WorldView());
             case SDLK_ESCAPE:

@@ -6,7 +6,7 @@
 
 #include "cp_437.h"
 #include "entity.h"
-#include "render.h"
+#include "rendering.h"
 #include "validate.h"
 #include "state_handling.h"
 #include "scene.h"
@@ -16,7 +16,7 @@
 const int CON_W = 96, CON_H = 54;
 const int SCREEN_W = 1600, SCREEN_H = 900;
 
-namespace crp
+namespace mom
 {
 	// Crossroads for game logic to pass through, trying to avoid using singletons :)
 	class Engine
