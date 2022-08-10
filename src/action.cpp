@@ -12,29 +12,26 @@ Validate Action::perform()
 Validate MapMovementAction::perform()
 {
 	// Get Player Position
-	Event* positionEvent = new Event(PositionEvent);
-	performer->eventPass(positionEvent);
-	int dest_x = positionEvent->x + dx, dest_y = positionEvent->y + dy;
-	delete positionEvent;
+	Event positionEvent = Event(PositionEvent);
+	performer->eventPass(&positionEvent);
+	int dest_x = positionEvent.x + dx, dest_y = positionEvent.y + dy;
 
 	// Check collision
-	Event* collideEvent = new Event(CollideEvent, dest_x, dest_y);
+	Event collideEvent = Event(CollideEvent, dest_x, dest_y);
 	bool collideFail = false;
 	if (!map->inBounds(dest_x, dest_y))
 		collideFail = true;
 	if (!map->mapTiles[dest_x][dest_y].walkable)
 		collideFail = true;
-	map->mapEventPass(collideEvent);
-	if (!collideEvent->check)
+	map->mapEventPass(&collideEvent);
+	if (!collideEvent.check)
 		collideFail = true;
-	delete collideEvent;
 	if (collideFail)
 		return Validate::INVALID;
 
 	// Move player in given direction
-	Event* movementEvent = new Event(MovementEvent, dest_x, dest_y, dx, dy);
-	map->mapEventPass(movementEvent);
-	delete movementEvent;
+	Event movementEvent = Event(MovementEvent, dest_x, dest_y, dx, dy);
+	map->mapEventPass(&movementEvent);
 	return Validate::VALID;
 }
 
@@ -102,10 +99,9 @@ Validate ExitMapAction::perform()
 Validate PlaceTileAction::perform()
 {
 	// Get Player Position and Direction
-	Event* positionEvent = new Event(PositionEvent);
-	performer->eventPass(positionEvent);
-	int dest_x = positionEvent->x + positionEvent->dx, dest_y = positionEvent->y + positionEvent->dy;
-	delete positionEvent;
+	Event positionEvent = Event(PositionEvent);
+	performer->eventPass(&positionEvent);
+	int dest_x = positionEvent.x + positionEvent.dx, dest_y = positionEvent.y + positionEvent.dy;
 
 	map->mapTiles[dest_x][dest_y] = wall;
 	return Validate::INVALID;
