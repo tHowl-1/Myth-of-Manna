@@ -12,6 +12,15 @@ const int MAP_OFFSET = 2;
 
 namespace mom
 {
+	struct ColorHSV
+	{
+		float hue;
+		float sat;
+		float val;
+	public:
+		ColorHSV(float H, float S, float V) : hue(H), sat(S), val(V) {}
+	};
+
 	// 2D Tile Renderer
 	class TileRender
 	{

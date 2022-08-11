@@ -13,14 +13,16 @@ namespace mom
 	public:
 		World* generateWorld(Params* params, Entity* player)
 		{
-			TCODHeightMap worldHeightMap(TILED_SIZE, TILED_SIZE);
+			static TCODRandom* defaultGenerator = TCODRandom::getInstance();
+			const int heightMapDimension = TILED_SIZE;
+			TCODHeightMap worldHeightMap(heightMapDimension, heightMapDimension);
 
 			TCODNoise* noise2d = new TCODNoise(2);
 			noise2d->setType(TCOD_NOISE_SIMPLEX);
 
-			for (int i = 0; i < 50; i++)
+			for (int i = 0; i < heightMapDimension; i++)
 			{
-				for (int j = 0; j < 50; j++)
+				for (int j = 0; j < heightMapDimension; j++)
 				{
 					float p[2] = { (float(i) + 0.1f) / 15, (float(j) + 0.1f) / 15 };
 					float heightVal = noise2d->getFbm(p, 32.0f);
@@ -28,6 +30,9 @@ namespace mom
 				}
 			}
 			delete noise2d;
+
+			worldHeightMap.normalize(0.0f, 1.0f);
+
 			return new World(&worldHeightMap, player);
 		}
 		

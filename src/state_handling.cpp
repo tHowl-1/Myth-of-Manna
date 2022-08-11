@@ -120,6 +120,9 @@ ActionOrHandler* WorldView::handle_events(SDL_Event* event, Entity* player, Worl
         case SDLK_RIGHT:
             return newAction(new WorldMovementAction((*activeWorld)->playerParty, *activeWorld, 1, 0));
 
+
+        case SDLK_r:
+            return newActionHandler(new WorldCreateAction(activeWorld, nullptr), new WorldView());
         case SDLK_RETURN:
             return newActionHandler(new EnterMapAction((*activeWorld)->playerParty, *activeWorld), new MapView());
 
