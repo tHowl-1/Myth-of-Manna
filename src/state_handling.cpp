@@ -331,7 +331,7 @@ void NewGame::on_render(TileRender* render, World* activeWorld, Entity* player)
     render->draw_screen_text("New Game", middle, 10);
     render->draw_screen_text("Generate", middle, 12);
     render->draw_menu_marker(choice, middle, 12, 2);
-    return; // Render nothing
+    return;
 }
 
 ActionOrHandler* LoadGame::handle_events(SDL_Event* event, Entity* player, World** activeWorld)

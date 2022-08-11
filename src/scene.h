@@ -27,42 +27,46 @@ namespace mom
 	class Map
 	{
 	public:
-		MapTile mapTiles[TILED_SIZE][TILED_SIZE];
+		Tile mapTiles[TILED_SIZE][TILED_SIZE];
 		// Monsters + Characters - in scene
 		std::vector<Entity*> activeEntities;
 		Map();
-		Map(WorldTile* parentTile);
 
 		// Gets an entity at the given location if it is movement blocking
-		void mapEventPass(Event* actionEvent);
+		void eventPass(Event* actionEvent);
 		bool inBounds(int x, int y);
 	};
 
 	struct Region
 	{
 		Map* regionMap = nullptr;
-		WorldTile worldTile;
+		float height = 0.0f;
+		float roughness = 0.0f;
+		float moisture = 0.0f;
+		bool flooded = false;
+		bool walkable = true;
+		bool forested = false;
 	};
 	
 	//Entity and GameMap container
 	class World
 	{
 	public:
-		Entity* player; 
-		Party* playerParty;
-		Params* params;
+		Entity* player = nullptr;
+		Party* playerParty = nullptr;
 		Region regionTiles[TILED_SIZE][TILED_SIZE];
-		// Characters - metagame npcs
-		Entity* staticEntities[MAX_ENTITIES];
 
+		// Characters - metagame npcs
+		// Entity* staticEntities[MAX_ENTITIES];
 		World();
-		World(Entity* newPlayer, Params* newParams);
+		World(TCODHeightMap* heightmap, Entity* newPlayer);
 
 		~World();
- 
+		
+
 		Map* get_map_at(int x, int y);
 		Map* get_active_map();
-		Party* get_blocking_party(int x, int y);
+		void eventPass(Event* actionEvent);
 		bool inBounds(int x, int y);
 	};	
 }

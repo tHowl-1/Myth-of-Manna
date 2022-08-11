@@ -10,18 +10,21 @@ const int MAX_MEMBERS = 6;
 
 namespace mom
 {
+	class Physics;
+	class Render;
+
 	class Entity
 	{
 	public:
 		//Components
-		class Physics*		physics		= nullptr;
+		Physics*	physics		= nullptr;
 		//Ai*			ai				= nullptr;
 		//Consumable*	consumable		= nullptr;
 		//Equippable*	equippable		= nullptr;
 		//Inventory*	inventory		= nullptr;
 		//Interactable* interactable	= nullptr;
 		//Soul*			soul			= nullptr;
-		class Render*		render		= nullptr;
+		Render*		render		= nullptr;
 
 		Entity(
 			Physics* physics,
@@ -43,11 +46,8 @@ namespace mom
 			render(render)
 		{}
 
-		~Entity()
-		{
-			delete physics;
-			delete render;
-		}
+		~Entity();
+		
 
 		void eventPass(Event* actionEvent);
 
@@ -56,21 +56,27 @@ namespace mom
 	class Party
 	{
 	public:
-		Entity* partyMembers[MAX_MEMBERS];
 		bool inMap = false;
+		Entity* partyMembers[MAX_MEMBERS];
 
-		int x;
-		int y;
+		//Components
+		Physics* physics = nullptr;
+		Render* render = nullptr;
+		/*class Group* group = nullptr;*/
 
-		int dx = 0;
-		int dy = 0;
+		Party(
+			Physics* physics,
+			//Group* group,
+			Render* render)
+			:
+			physics(physics),
+			//group(group),
+			render(render)
+		{}
 
-		int character;
-		tcod::ColorRGB color;
-		bool solid;
+		~Party();
 
-		Party();
+		void eventPass(Event* actionEvent);
 
-		void move(int dx, int dy);
 	};
 }

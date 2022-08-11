@@ -1,4 +1,6 @@
 #include "scene.h"
+#include "components/physics.h"
+#include "components/render.h"
 
 using namespace mom;
 
@@ -13,12 +15,11 @@ bool World::inBounds(int x, int y)
 	return (x >= 0 && x < TILED_SIZE&& y >= 0 && y < TILED_SIZE);
 }
 
-void Map::mapEventPass(Event* actionEvent)
+void Map::eventPass(Event* actionEvent)
 {
 	for (Entity* entity : activeEntities)
 		entity->eventPass(actionEvent);
 }
-
 
 Map::Map()
 {
@@ -34,92 +35,38 @@ Map::Map()
 	}
 }
 
-Map::Map(WorldTile* parentTile)
-{
-	for (int i = 0; i < TILED_SIZE; i++)
-	{
-		for (int j = 0; j < TILED_SIZE; j++)
-		{
-			if ((i + j) % 2 == 0)
-				mapTiles[i][j] = yellow;
-			else
-				mapTiles[i][j] = green;
-		}
-	}
-}
 
 World::World()
 {
-	player = nullptr;
-	params = nullptr;
 	for (int i = 0; i < TILED_SIZE; i++)
 	{
 		for (int j = 0; j < TILED_SIZE; j++)
 		{
 			regionTiles[i][j].regionMap = nullptr;
-			regionTiles[i][j].worldTile = plains;
 		}
 	}
-	for (int i = 0; i < MAX_ENTITIES; i++)
-	{
-		staticEntities[i] = nullptr;
-	}
+	player = nullptr;
 }
 
-World::World(Entity* newPlayer, Params* newParams)
+
+World::World(TCODHeightMap* heightmap, Entity* newPlayer)
 {
-	params = newParams;
-	// Generate world based on params
-	if (params->isPlains)
-	{
-		for (int i = 0; i < TILED_SIZE; i++)
-		{
-			for (int j = 0; j < TILED_SIZE; j++)
-			{
-				regionTiles[i][j].worldTile = plains;
-			}
-		}
-	}
-	else if (params->isRock)
-	{
-		for (int i = 0; i < TILED_SIZE; i++)
-		{
-			for (int j = 0; j < TILED_SIZE; j++)
-			{
-				regionTiles[i][j].worldTile = rock;
-			}
-		}
-	}
-	else
-	{
-		for (int i = 0; i < TILED_SIZE; i++)
-		{
-			for (int j = 0; j < TILED_SIZE; j++)
-			{
-				regionTiles[i][j].worldTile = water;
-			}
-		}
-	}
 	for (int i = 0; i < TILED_SIZE; i++)
 	{
 		for (int j = 0; j < TILED_SIZE; j++)
 		{
 			regionTiles[i][j].regionMap = nullptr;
+			regionTiles[i][j].height = heightmap->getValue(i, j);
 		}
 	}
 	player = newPlayer;
-	playerParty = new Party();
-	playerParty->character = ord("&");
+	playerParty = new Party(new Physics(0, 0, true), new Render(ord("&"), WHITE));
 	playerParty->partyMembers[0] = player;
-	staticEntities[0] = player;
 }
+
 
 World::~World()
 {
-	if (params != nullptr)
-	{
-		delete params;
-	}
 	if (player != nullptr)
 	{
 		delete player;
@@ -130,17 +77,19 @@ Map* World::get_map_at(int x, int y)
 {
 	if (regionTiles[x][y].regionMap == nullptr)
 	{
-		regionTiles[x][y].regionMap = new Map(&regionTiles[x][y].worldTile);
+		regionTiles[x][y].regionMap = new Map();
 	}
 	return regionTiles[x][y].regionMap;
 }
 
 Map* World::get_active_map()
 {
-	return get_map_at(playerParty->x, playerParty->y);
+	Event positionEvent = Event(PositionEvent);
+	playerParty->eventPass(&positionEvent);
+	return get_map_at(positionEvent.x, positionEvent.y);
 }
 
-Party* World::get_blocking_party(int x, int y)
+void World::eventPass(Event* actionEvent)
 {
-	return nullptr;
+	playerParty->eventPass(actionEvent);
 }

@@ -30,18 +30,22 @@ namespace mom
 					actionEvent->dy = dy;
 					break;
 				case CollideEvent:
-					if (actionEvent->x == x && actionEvent->y == y)
+					if (actionEvent->x + actionEvent->dx == x && actionEvent->y + actionEvent->dy == y)
 						actionEvent->check = false;
 					break;
 				case MovementEvent:
-					x = actionEvent->x;
-					y = actionEvent->y;
+					x = actionEvent->x + actionEvent->dx;
+					y = actionEvent->y + actionEvent->dy;
 					dx = actionEvent->dx;
 					dy = actionEvent->dy;
 					break;
 				case RenderEvent:
 					actionEvent->x = x;
 					actionEvent->y = y;
+					break;
+				case DirectionEvent:
+					dx = actionEvent->dx;
+					dy = actionEvent->dy;
 					break;
 				default:
 					break;

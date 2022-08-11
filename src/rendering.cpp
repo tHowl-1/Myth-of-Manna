@@ -12,16 +12,15 @@ void TileRender::draw_entities(Map* map)
 
 	for (Entity* entity : map->activeEntities)
 	{
-		Event* renderEvent = new Event(RenderEvent);
-		entity->eventPass(renderEvent);
-		world_X = renderEvent->x;
-		world_Y = renderEvent->y;
+		Event renderEvent = Event(RenderEvent);
+		entity->eventPass(&renderEvent);
+		world_X = renderEvent.x;
+		world_Y = renderEvent.y;
 		screen_X = world_X + MAP_OFFSET;
 		screen_Y = world_Y + MAP_OFFSET;
 
-		console->at(screen_X, screen_Y).ch = renderEvent->character;
-		console->at(screen_X, screen_Y).fg = renderEvent->color;
-		delete renderEvent;
+		console->at(screen_X, screen_Y).ch = renderEvent.character;
+		console->at(screen_X, screen_Y).fg = renderEvent.color;
 	}
 }
 
@@ -42,18 +41,20 @@ void TileRender::draw_map_tiles(Map* map)
 
 void TileRender::draw_parties(World* world)
 {
-	
 	int world_X, world_Y;
 	int screen_X, screen_Y;
+
 	Party* party = world->playerParty;
 	{
-		world_X = party->x;
-		world_Y = party->y;
+		Event renderEvent = Event(RenderEvent);
+		party->eventPass(&renderEvent);
+		world_X = renderEvent.x;
+		world_Y = renderEvent.y;
 		screen_X = world_X + MAP_OFFSET;
 		screen_Y = world_Y + MAP_OFFSET;
 
-		console->at(screen_X, screen_Y).ch = party->character;
-		console->at(screen_X, screen_Y).fg = party->color;
+		console->at(screen_X, screen_Y).ch = renderEvent.character;
+		console->at(screen_X, screen_Y).fg = renderEvent.color;
 	}
 }
 
@@ -66,8 +67,13 @@ void TileRender::draw_world_tiles(World* world)
 		{
 			screen_X = world_X + MAP_OFFSET;
 			screen_Y = world_Y + MAP_OFFSET;
-			console->at(screen_X, screen_Y).ch = world->regionTiles[world_X][world_Y].worldTile.character;
-			console->at(screen_X, screen_Y).fg = world->regionTiles[world_X][world_Y].worldTile.color;
+			console->at(screen_X, screen_Y).ch = ord("█");
+			if (world->regionTiles[world_X][world_Y].height > 0)
+				console->at(screen_X, screen_Y).fg = GREEN;
+			else if (world->regionTiles[world_X][world_Y].height < 0)
+				console->at(screen_X, screen_Y).fg = BLUE;
+			else
+				console->at(screen_X, screen_Y).fg = RED;
 		}
 	}
 }

@@ -1,6 +1,7 @@
 #include "action.h"
 #include "components/physics.h"
 #include "components/render.h"
+#include "mapgen.h"
 
 using namespace mom;
 
@@ -11,43 +12,54 @@ Validate Action::perform()
 
 Validate MapMovementAction::perform()
 {
-	// Get Player Position
-	Event positionEvent = Event(PositionEvent);
-	performer->eventPass(&positionEvent);
-	int dest_x = positionEvent.x + dx, dest_y = positionEvent.y + dy;
+	// Set Player Direction
+	Event mapMovementEvent = Event(DirectionEvent, 0, 0, dx, dy);
+	performer->eventPass(&mapMovementEvent);
+
+	// Get Player Position and Direction
+	mapMovementEvent.type = PositionEvent;
+	performer->eventPass(&mapMovementEvent);
+	int dest_x = mapMovementEvent.x + mapMovementEvent.dx, dest_y = mapMovementEvent.y + mapMovementEvent.dy;
 
 	// Check collision
-	Event collideEvent = Event(CollideEvent, dest_x, dest_y);
+	mapMovementEvent.type = CollideEvent;
 	bool collideFail = false;
 	if (!map->inBounds(dest_x, dest_y))
 		collideFail = true;
 	if (!map->mapTiles[dest_x][dest_y].walkable)
 		collideFail = true;
-	map->mapEventPass(&collideEvent);
-	if (!collideEvent.check)
+	map->eventPass(&mapMovementEvent);
+	if (!mapMovementEvent.check)
 		collideFail = true;
 	if (collideFail)
 		return Validate::INVALID;
 
 	// Move player in given direction
-	Event movementEvent = Event(MovementEvent, dest_x, dest_y, dx, dy);
-	map->mapEventPass(&movementEvent);
+	mapMovementEvent.type = MovementEvent;
+	map->eventPass(&mapMovementEvent);
 	return Validate::VALID;
 }
 
 Validate WorldMovementAction::perform()
 {
-	int dest_x = party->x + dx, dest_y = party->y + dy;
+	// Set Party Direction
+	Event worldMovementEvent = Event(DirectionEvent, 0, 0, dx, dy);
+	performer->eventPass(&worldMovementEvent);
+
+	// Get Party Position and Direction
+	worldMovementEvent.type = PositionEvent;
+	performer->eventPass(&worldMovementEvent);
+	int dest_x = worldMovementEvent.x + worldMovementEvent.dx, dest_y = worldMovementEvent.y + worldMovementEvent.dy;
+
 	// Check collision
 	if (!world->inBounds(dest_x, dest_y))
 		return Validate::INVALID; // Out of bounds
-	if (!world->regionTiles[dest_x][dest_y].worldTile.walkable)
-		return Validate::INVALID; // Blocked by a tile
+	if (!world->regionTiles[dest_x][dest_y].walkable)
+		return Validate::INVALID; // Blocked by water
 
 	// Move player in given direction
-	party->move(dx, dy);
-	party->dx = dx;
-	party->dy = dy;
+	worldMovementEvent.type = MovementEvent;
+	world->eventPass(&worldMovementEvent);
 	return Validate::VALID;
 }
 
@@ -55,24 +67,19 @@ Validate WorldCreateAction::perform()
 {
 	Entity* player = new Entity(new Physics(0, 0, true), new Render(ord("@"), WHITE));
 	delete *world;
-	*world = new World(player, new Params(true, false));
+	MapGenerator newWorldGen = MapGenerator();
+	*world = newWorldGen.generateWorld(params, player);
 	return Validate::INVALID;
 }
 
 Validate MeleeAction::perform()
 {
-
-
 	// TODO - check currently held weapon
 	return Validate::VALID;
 }
 
 Validate BumpAction::perform()
 {
-	//int dest_x = entity->x + dx, dest_y = entity->y + dy;
-	//if (map->get_blocking_entity(dest_x, dest_y))
-	//	return MeleeAction(entity, map, dx, dy).perform();
-	//else
 	return MapMovementAction(performer, map, dx, dy).perform();
 }
 

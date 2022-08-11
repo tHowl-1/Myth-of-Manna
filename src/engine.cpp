@@ -1,5 +1,4 @@
 ﻿#include "palette.h"
-#include <iostream>
 #include "engine.h"
 
 using namespace mom;
@@ -22,9 +21,9 @@ Engine::Engine()
 
 	console = tcod::Console{ CON_W, CON_H };
 	params.console = console.get();  // DELETE - Possibly unnecessary, pls confirm
-	
-	context = tcod::new_context(params);
 
+	context = tcod::new_context(params);
+	
 	render = new TileRender(console.get());
 	activeHandler = new MainMenu();
 	activeWorld = new World(); // Blank world

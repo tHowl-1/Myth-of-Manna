@@ -11,6 +11,7 @@ namespace mom
 		CollideEvent,
 		MovementEvent,
 		RenderEvent,
+		DirectionEvent
 	};
 
 	class Event

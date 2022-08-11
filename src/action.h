@@ -36,10 +36,10 @@ namespace mom
 	class WorldAction : public Action
 	{
 	public:
-		Party* party;
+		Party* performer;
 		World* world;
 
-		WorldAction(Party* performer, World* activeWorld) : party(performer), world(activeWorld) {}
+		WorldAction(Party* performer, World* activeWorld) : performer(performer), world(activeWorld) {}
 	};
 
 	// Generates a world
