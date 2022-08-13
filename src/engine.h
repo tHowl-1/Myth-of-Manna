@@ -14,7 +14,7 @@
 // FIXME - Still not sure about where to put these constant values (maybe their own header file with the action enumerator?)
 // 16:9 aspect ratio, console/screem width and height in cells/pixels respectively
 const int CON_W = 96, CON_H = 54;
-const int SCREEN_W = 1600, SCREEN_H = 900;
+const int SCREEN_W = CON_W * 16, SCREEN_H = CON_H * 16;
 
 namespace mom
 {
@@ -25,7 +25,7 @@ namespace mom
 		tcod::Tileset tileset;
 		tcod::Console console;
 		tcod::ContextPtr context;
-
+		TCOD_ViewportOptions viewportOptions;
 
 		TileRender* render;
 		BaseHandler* activeHandler;

@@ -54,7 +54,7 @@ Validate WorldMovementAction::perform()
 	// Check collision
 	if (!world->inBounds(dest_x, dest_y))
 		return Validate::INVALID; // Out of bounds
-	if (!world->regionTiles[dest_x][dest_y].walkable)
+	if (!world->worldTiles[dest_x][dest_y].walkable)
 		return Validate::INVALID; // Blocked by water
 
 	// Move player in given direction

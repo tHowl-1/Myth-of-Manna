@@ -11,8 +11,35 @@
 const int TILED_SIZE = 50;
 const int MAX_ENTITIES = 256;
 
+const float waterLevel = 0.3f;
+const float shoreLevel = 0.2f;
+const float peakLevel = 0.95f;
+const float rockyLevel = 0.7f;
+const float forestLevel = 0.5f; 
+const float hubLevel = 0.97f;
+const float riverLevel = 0.8f;
+
+
 namespace mom
 {
+	struct TilePosition
+	{
+		int x;
+		int y;
+
+		int id;
+
+		TilePosition() : x(0), y(0), id(0) {}
+		TilePosition(int x, int y, int id) : x(x), y(y), id(id) {}
+	};
+
+	struct PathTile
+	{
+		bool river;
+		bool path;
+		bool road;
+	};
+
 	class Params
 	{
 	public:
@@ -36,17 +63,6 @@ namespace mom
 		void eventPass(Event* actionEvent);
 		bool inBounds(int x, int y);
 	};
-
-	struct Region
-	{
-		Map* regionMap = nullptr;
-		float height = 0.0f;
-		float roughness = 0.0f;
-		float moisture = 0.0f;
-		bool flooded = false;
-		bool walkable = true;
-		bool forested = false;
-	};
 	
 	//Entity and GameMap container
 	class World
@@ -54,12 +70,15 @@ namespace mom
 	public:
 		Entity* player = nullptr;
 		Party* playerParty = nullptr;
-		Region regionTiles[TILED_SIZE][TILED_SIZE];
+
+		Map* regionTiles[TILED_SIZE][TILED_SIZE];
+		WorldTile worldTiles[TILED_SIZE][TILED_SIZE];
 
 		// Characters - metagame npcs
 		// Entity* staticEntities[MAX_ENTITIES];
+
 		World();
-		World(TCODHeightMap* heightmap, Entity* newPlayer);
+		World(WorldTile newWorldTiles[TILED_SIZE][TILED_SIZE], Entity* newPlayer);
 
 		~World();
 		

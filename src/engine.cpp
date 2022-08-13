@@ -23,6 +23,12 @@ Engine::Engine()
 	params.console = console.get();  // DELETE - Possibly unnecessary, pls confirm
 
 	context = tcod::new_context(params);
+
+	viewportOptions.keep_aspect = true;
+	viewportOptions.integer_scaling = true;
+	viewportOptions.clear_color = { 0, 0, 0, 255 };
+	viewportOptions.align_x = 0.5f;
+	viewportOptions.align_y = 0.5f;
 	
 	render = new TileRender(console.get());
 	activeHandler = new MainMenu();
@@ -67,7 +73,7 @@ void Engine::validate_action(ActionOrHandler* actionOrHandler)
 void Engine::update()
 {
 	activeHandler->on_render(render, activeWorld, activeWorld->player);
-	context->present(console);
+	context->present(console, viewportOptions);
 	TCOD_console_clear(console.get());
 	SDL_Event event;
 	SDL_WaitEvent(nullptr); //Optional, sleep until events are available (WARNING This is probably the source of pausing in realtime rendering)

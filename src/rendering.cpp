@@ -68,40 +68,8 @@ void TileRender::draw_world_tiles(World* world)
 			screen_X = world_X + MAP_OFFSET;
 			screen_Y = world_Y + MAP_OFFSET;
 
-			float colorValue = world->regionTiles[world_X][world_Y].height;
-			if (colorValue < 0.3f)
-			{
-				console->at(screen_X, screen_Y).ch = ord("~");
-				console->at(screen_X, screen_Y).fg = LT_BLUE;
-				console->at(screen_X, screen_Y).bg = BLUE;
-			}
-			else if (colorValue < 0.5f)
-			{
-				console->at(screen_X, screen_Y).ch = ord("\"");
-				console->at(screen_X, screen_Y).bg = LT_GREEN;
-				console->at(screen_X, screen_Y).fg = GREEN;
-			}
-			else if (colorValue > 0.8f)
-			{
-				if (colorValue > 0.93f)
-				{
-				console->at(screen_X, screen_Y).ch = ord("^");
-				console->at(screen_X, screen_Y).fg = WHITE;
-				console->at(screen_X, screen_Y).bg = DK_GRAY;
-				}
-				else
-				{
-					console->at(screen_X, screen_Y).ch = ord("n");
-					console->at(screen_X, screen_Y).fg = LT_GRAY;
-					console->at(screen_X, screen_Y).bg = DK_GRAY;
-				}
-			}
-			else
-			{
-				console->at(screen_X, screen_Y).ch = ord("♠");
-				console->at(screen_X, screen_Y).bg = LT_GREEN;
-				console->at(screen_X, screen_Y).fg = GREEN;
-			}
+			console->at(screen_X, screen_Y).ch = world->worldTiles[world_X][world_Y].character;
+			console->at(screen_X, screen_Y).fg = world->worldTiles[world_X][world_Y].color;
 		}
 	}
 }

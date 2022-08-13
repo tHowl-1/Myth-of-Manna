@@ -1,4 +1,4 @@
-#include "scene.h"
+﻿#include "scene.h"
 #include "components/physics.h"
 #include "components/render.h"
 
@@ -42,25 +42,26 @@ World::World()
 	{
 		for (int j = 0; j < TILED_SIZE; j++)
 		{
-			regionTiles[i][j].regionMap = nullptr;
+			regionTiles[i][j] = nullptr;
 		}
 	}
 	player = nullptr;
 }
 
 
-World::World(TCODHeightMap* heightmap, Entity* newPlayer)
+World::World(WorldTile newWorldTiles[TILED_SIZE][TILED_SIZE], Entity* newPlayer)
 {
 	for (int i = 0; i < TILED_SIZE; i++)
 	{
 		for (int j = 0; j < TILED_SIZE; j++)
 		{
-			regionTiles[i][j].regionMap = nullptr;
-			regionTiles[i][j].height = heightmap->getValue(i, j);
+			regionTiles[i][j] = nullptr;
+			worldTiles[i][j] = newWorldTiles[i][j];
 		}
 	}
+
 	player = newPlayer;
-	playerParty = new Party(new Physics(0, 0, true), new Render(ord("&"), WHITE));
+	playerParty = new Party(new Physics(24, 24, true), new Render(ord("&"), WHITE));
 	playerParty->partyMembers[0] = player;
 }
 
@@ -75,11 +76,11 @@ World::~World()
 
 Map* World::get_map_at(int x, int y)
 {
-	if (regionTiles[x][y].regionMap == nullptr)
+	if (regionTiles[x][y] == nullptr)
 	{
-		regionTiles[x][y].regionMap = new Map();
+		regionTiles[x][y] = new Map();
 	}
-	return regionTiles[x][y].regionMap;
+	return regionTiles[x][y];
 }
 
 Map* World::get_active_map()
