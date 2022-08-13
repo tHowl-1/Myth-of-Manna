@@ -121,51 +121,53 @@ namespace mom
 
 			// Populate Tilemap
 			WorldTile worldTiles[TILED_SIZE][TILED_SIZE];
-			for (int i = 0; i < TILED_SIZE; i++)
 			{
-				for (int j = 0; j < TILED_SIZE; j++)
+				for (int i = 0; i < TILED_SIZE; i++)
 				{
-					float heightValue = heightMap->getValue(i, j);
-					float roughValue = roughnessMap->getValue(i, j);
-					float tempValue = temperatureMap->getValue(i, j);
-					float moistValue = moistureMap->getValue(i, j);
+					for (int j = 0; j < TILED_SIZE; j++)
+					{
+						float heightValue = heightMap->getValue(i, j);
+						float roughValue = roughnessMap->getValue(i, j);
+						float tempValue = temperatureMap->getValue(i, j);
+						float moistValue = moistureMap->getValue(i, j);
 
-					// Define World Tile
-					if (heightValue < waterLevel)			// Flooded
-					{
-						if (heightValue < shoreLevel)
-							worldTiles[i][j] = deepOcean;
-						else
-							worldTiles[i][j] = shallowOcean;
-					}
-					else if (roughValue > peakLevel)	// Mountains
-						worldTiles[i][j] = mountains;
-					else if (roughValue > rockyLevel)		// Rocky
-						worldTiles[i][j] = rocky;
-					else							// Smooth
-					{
-						if (tempValue > 0.7f)
+						// Define World Tile
+						if (heightValue < waterLevel)			// Flooded
 						{
-							if (moistValue < 0.5f)
-								worldTiles[i][j] = desert;
+							if (heightValue < shoreLevel)
+								worldTiles[i][j] = deepOcean;
 							else
-							{
-								if ((i + j) % 2 == 0)
-									worldTiles[i][j] = grassland;
-								else
-									worldTiles[i][j] = scrubland;
-							}
+								worldTiles[i][j] = shallowOcean;
 						}
-						else
+						else if (roughValue > peakLevel)	// Mountains
+							worldTiles[i][j] = mountains;
+						else if (roughValue > rockyLevel)		// Rocky
+							worldTiles[i][j] = rocky;
+						else							// Smooth
 						{
-							if (moistValue > 0.5f)
-								worldTiles[i][j] = forest;
+							if (tempValue > 0.7f)
+							{
+								if (moistValue < 0.5f)
+									worldTiles[i][j] = desert;
+								else
+								{
+									if ((i + j) % 2 == 0)
+										worldTiles[i][j] = grassland;
+									else
+										worldTiles[i][j] = scrubland;
+								}
+							}
 							else
 							{
-								if ((i + j) % 2 == 0)
-									worldTiles[i][j] = grassland;
+								if (moistValue > 0.5f)
+									worldTiles[i][j] = forest;
 								else
-									worldTiles[i][j] = scrubland;
+								{
+									if ((i + j) % 2 == 0)
+										worldTiles[i][j] = grassland;
+									else
+										worldTiles[i][j] = scrubland;
+								}
 							}
 						}
 					}
@@ -173,217 +175,408 @@ namespace mom
 			}
 
 			// Pathing
-
 			// Setup Collision Map and Pathing Points
-			TCODMap collisionMap = TCODMap(TILED_SIZE, TILED_SIZE);
-
+			TCODMap pathCollisionMap = TCODMap(TILED_SIZE, TILED_SIZE);
+			TCODMap riverCollisionMap = TCODMap(TILED_SIZE, TILED_SIZE);
 			TCODList<TilePosition> riverPoints;
 			int riverId = 0;
 			TCODList<TilePosition> hubPoints;
 			int hubId = 0;
 			TCODList<TilePosition> connectedNodes;
 			bool pathMask[TILED_SIZE][TILED_SIZE];
-			for (int i = 0; i < TILED_SIZE; i++)
+			bool riverMask[TILED_SIZE][TILED_SIZE];
 			{
-				for (int j = 0; j < TILED_SIZE; j++)
+				for (int i = 0; i < TILED_SIZE; i++)
 				{
-					pathMask[i][j] = false;
-
-					float heightValue = heightMap->getValue(i, j);
-					float roughValue = roughnessMap->getValue(i, j);
-					float hubValue = hubMap->getValue(i, j);
-					float riverValue = riverMap->getValue(i, j);
-
-					if (heightValue < waterLevel || roughValue > rockyLevel)
+					for (int j = 0; j < TILED_SIZE; j++)
 					{
-						collisionMap.setProperties(i, j, true, false);
-					}
-					else
-					{
-						collisionMap.setProperties(i, j, true, true);
-					}
-
-					if (collisionMap.isWalkable(i, j))
-					{
-						if (hubValue > hubLevel)
+						pathMask[i][j] = false;
+						riverMask[i][j] = false;
+						float heightValue = heightMap->getValue(i, j);
+						float roughValue = roughnessMap->getValue(i, j);
+						float hubValue = hubMap->getValue(i, j);
+						float riverValue = riverMap->getValue(i, j);
+						pathCollisionMap.setProperties(i, j, true, true);
+						riverCollisionMap.setProperties(i, j, true, true);
+						if (heightValue < waterLevel)
 						{
-							worldTiles[i][j] = hub;
-							pathMask[i][j] = true;
-							hubPoints.push(TilePosition(i, j, hubId));
-							hubId++;
+							pathCollisionMap.setProperties(i, j, true, false);
 						}
-						else if (riverValue > riverLevel - 0.01f && riverValue < riverLevel)
+						if (roughValue > rockyLevel)
 						{
-							worldTiles[i][j] = riverHead;
-							riverPoints.push(TilePosition(i, j, riverId));
-							riverId++;
+							pathCollisionMap.setProperties(i, j, true, false);
+							riverCollisionMap.setProperties(i, j, true, false);
+						}
+
+						if (pathCollisionMap.isWalkable(i, j))
+						{
+							if (hubValue > hubLevel)
+							{
+								worldTiles[i][j] = hub;
+								pathMask[i][j] = true;
+								
+								hubPoints.push(TilePosition(i, j, hubId));
+								hubId++;
+							}
+							else if (riverValue > riverLevel - 0.005f && riverValue < riverLevel)
+							{
+								riverPoints.push(TilePosition(i, j, riverId));
+								riverId++;
+							}
 						}
 					}
 				}
 			}
 
-			TCODDijkstra pathfinder = TCODDijkstra(&collisionMap, 0.0f);
-			
-			for (TilePosition* iterator = hubPoints.begin(); iterator != hubPoints.end(); iterator++)
+			// Calculate Paths
+			TCODDijkstra pathfinder = TCODDijkstra(&pathCollisionMap, 0.0f);
 			{
-				TilePosition currentPoint = *iterator;
-				TilePosition closestPoint;
-				float shortestDistance = 10000.0f;
-
-				pathfinder.compute(currentPoint.x, currentPoint.y);
-
-				// Find Closest Point
-				for (TilePosition* subIterator = hubPoints.begin(); subIterator != hubPoints.end(); subIterator++)
+				for (TilePosition* iterator = hubPoints.begin(); iterator != hubPoints.end(); iterator++)
 				{
-					TilePosition currentSubPoint = *subIterator;
-					float currentDistance;
-					
-					if (currentSubPoint.x != currentPoint.x && currentSubPoint.y != currentPoint.y)
+					TilePosition currentPoint = *iterator;
+					TilePosition closestPoint;
+					float shortestDistance = 10000.0f;
+
+					pathfinder.compute(currentPoint.x, currentPoint.y);
+
+					// Find Closest Point
+					for (TilePosition* subIterator = hubPoints.begin(); subIterator != hubPoints.end(); subIterator++)
 					{
-						// Check points aren't already connected:
-						bool connected = false;
-						for (TilePosition* connectedIterator = connectedNodes.begin(); connectedIterator != connectedNodes.end(); connectedIterator++)
+						TilePosition currentSubPoint = *subIterator;
+						float currentDistance;
+
+						if (currentSubPoint.x != currentPoint.x && currentSubPoint.y != currentPoint.y)
 						{
-							if (connectedIterator->x == currentPoint.id)
+							// Check points aren't already connected:
+							bool connected = false;
+							for (TilePosition* connectedIterator = connectedNodes.begin(); connectedIterator != connectedNodes.end(); connectedIterator++)
 							{
-								if (connectedIterator->y == currentSubPoint.id)
+								if (connectedIterator->x == currentPoint.id)
 								{
-									connected = true;
+									if (connectedIterator->y == currentSubPoint.id)
+									{
+										connected = true;
+									}
+								}
+								if (connectedIterator->y == currentPoint.id)
+								{
+									if (connectedIterator->x == currentSubPoint.id)
+									{
+										connected = true;
+									}
 								}
 							}
-							if (connectedIterator->y == currentPoint.id)
+							if (!connected)
 							{
-								if (connectedIterator->x == currentSubPoint.id)
+								currentDistance = pathfinder.getDistance(currentSubPoint.x, currentSubPoint.y);
+								if (currentDistance < shortestDistance && currentDistance > 0.0f)
 								{
-									connected = true;
+									shortestDistance = currentDistance;
+									closestPoint = currentSubPoint;
 								}
-							}
-						}
-						if (!connected)
-						{
-							currentDistance = pathfinder.getDistance(currentSubPoint.x, currentSubPoint.y);
-							if (currentDistance < shortestDistance && currentDistance > 0.0f)
-							{
-								shortestDistance = currentDistance;
-								closestPoint = currentSubPoint;
 							}
 						}
 					}
-				}
 
-				// Walk Path
-				
-				if (shortestDistance < 10000.0f)
+					// Walk Path
+
+					if (shortestDistance < 10000.0f)
+					{
+
+						pathfinder.setPath(closestPoint.x, closestPoint.y);
+						while (!pathfinder.isEmpty())
+						{
+							int i, j;
+							pathfinder.walk(&i, &j);
+							if (worldTiles[i][j].tileName != "Hub")
+								pathMask[i][j] = true;
+						}
+
+						// Mark Points as Connected
+						connectedNodes.push(TilePosition(currentPoint.id, closestPoint.id, 0));
+					}
+				}
+			}
+
+			// Calculate Rivers
+			TCODDijkstra riverfinder = TCODDijkstra(&riverCollisionMap, 0.0f);
+			{
+				for (TilePosition* iterator = riverPoints.begin(); iterator != riverPoints.end(); iterator++)
 				{
-					
-					pathfinder.setPath(closestPoint.x, closestPoint.y);
-					while (!pathfinder.isEmpty())
+					TilePosition currentPoint = *iterator;
+					bool north = false;
+					bool south = false;
+					bool east = false;
+					bool west = false;
+
+					int northDist = currentPoint.y;
+					int southDist = TILED_SIZE - currentPoint.y;
+					int eastDist = TILED_SIZE - currentPoint.x;
+					int westDist = currentPoint.x;
+
+					if (westDist < eastDist) // Closer West
+					{
+						if (northDist < southDist) // Closer North
+						{
+							if (northDist < westDist)
+							{
+								north = true;
+							}
+							else
+							{
+								west = true;
+							}
+						}
+						else // Closer South
+						{
+							if (southDist < westDist)
+							{
+								south = true;
+							}
+							else
+							{
+								west = true;
+							}
+						}
+					}
+					else // Closer East
+					{
+
+						if (northDist < southDist) // Closer North
+						{
+							if (northDist < eastDist)
+							{
+								north = true;
+							}
+							else
+							{
+								east = true;
+							}
+						}
+						else // Closer South
+						{
+							if (southDist < eastDist)
+							{
+								south = true;
+							}
+							else
+							{
+								east = true;
+							}
+						}
+					}
+
+					TilePosition closestPoint = TilePosition(0, 0, 0);
+					if (north)
+						closestPoint = TilePosition(currentPoint.x, 0, 0);
+					if (south)
+						closestPoint = TilePosition(currentPoint.x, TILED_SIZE - 1, 0);
+					if (east)
+						closestPoint = TilePosition(TILED_SIZE - 1, currentPoint.y, 0);
+					if (west)
+						closestPoint = TilePosition(0, currentPoint.y, 0);
+
+					riverfinder.compute(currentPoint.x, currentPoint.y);
+					riverfinder.setPath(closestPoint.x, closestPoint.y);
+					while (!riverfinder.isEmpty())
 					{
 						int i, j;
-						pathfinder.walk(&i, &j);
-						if (worldTiles[i][j].tileName != "Hub")
-							pathMask[i][j] = true;
+						riverfinder.walk(&i, &j);
+						if (worldTiles[i][j].flooded)
+							break;
+						riverMask[i][j] = true;
 					}
 
-					// Mark Points as Connected
-					connectedNodes.push(TilePosition(currentPoint.id, closestPoint.id, 0));
 				}
 			}
-
 			// Blit Paths onto map
-			for (int i = 0; i < TILED_SIZE; i++)
 			{
-				for (int j = 0; j < TILED_SIZE; j++)
+				for (int i = 0; i < TILED_SIZE; i++)
 				{
-					if (pathMask[i][j])
+					for (int j = 0; j < TILED_SIZE; j++)
 					{
-						// Check edge neighbors
-						worldTiles[i][j] = path;
-						bool N = false;
-						bool E = false;
-						bool S = false;
-						bool W = false;
-
-						int num = 0;
-
-						if (i - 1 > 0)
+						if (riverMask[i][j])
 						{
-							if (pathMask[i - 1][j])
+							// Check edge neighbors
+							worldTiles[i][j] = river;
+							bool N = false;
+							bool E = false;
+							bool S = false;
+							bool W = false;
+
+							int num = 0;
+
+							if (i - 1 > 0)
 							{
-								W = true;
-								num++;
+								if (riverMask[i - 1][j])
+								{
+									W = true;
+									num++;
+								}
+							}
+
+							if (i + 1 < TILED_SIZE)
+							{
+								if (riverMask[i + 1][j])
+								{
+									E = true;
+									num++;
+								}
+							}
+
+							if (j - 1 > 0)
+							{
+								if (riverMask[i][j - 1])
+								{
+									N = true;
+									num++;
+								}
+							}
+
+							if (j + 1 < TILED_SIZE)
+							{
+								if (riverMask[i][j + 1])
+								{
+									S = true;
+									num++;
+								}
+							}
+
+							if (num == 1)
+							{
+								if (N || S)
+									worldTiles[i][j].character = ord("│");
+								if (E || W)
+									worldTiles[i][j].character = ord("─");
+							}
+							else if (num == 2)
+							{
+								if (N && S)
+									worldTiles[i][j].character = ord("│");
+								if (W && E)
+									worldTiles[i][j].character = ord("─");
+								if (W && S)
+									worldTiles[i][j].character = ord("┐");
+								if (S && E)
+									worldTiles[i][j].character = ord("┌");
+								if (E && N)
+									worldTiles[i][j].character = ord("└");
+								if (N && W)
+									worldTiles[i][j].character = ord("┘");
+							}
+							else if (num == 3)
+							{
+								if (W && N && E)
+									worldTiles[i][j].character = ord("┴");
+								if (N && W && S)
+									worldTiles[i][j].character = ord("┤");
+								if (W && S && E)
+									worldTiles[i][j].character = ord("┬");
+								if (N && E && S)
+									worldTiles[i][j].character = ord("├");
+							}
+							else if (num == 4)
+							{
+								worldTiles[i][j].character = ord("┼");
 							}
 						}
-
-						if (i + 1 < TILED_SIZE)
+						if (pathMask[i][j])
 						{
-							if (pathMask[i + 1][j])
+							// Check edge neighbors
+							worldTiles[i][j] = path;
+							bool N = false;
+							bool E = false;
+							bool S = false;
+							bool W = false;
+
+							int num = 0;
+
+							if (i - 1 > 0)
 							{
-								E = true;
-								num++;
+								if (pathMask[i - 1][j])
+								{
+									W = true;
+									num++;
+								}
+							}
+
+							if (i + 1 < TILED_SIZE)
+							{
+								if (pathMask[i + 1][j])
+								{
+									E = true;
+									num++;
+								}
+							}
+
+							if (j - 1 > 0)
+							{
+								if (pathMask[i][j - 1])
+								{
+									N = true;
+									num++;
+								}
+							}
+
+							if (j + 1 < TILED_SIZE)
+							{
+								if (pathMask[i][j + 1])
+								{
+									S = true;
+									num++;
+								}
+							}
+
+							if (num == 1)
+							{
+								if (N || S)
+									worldTiles[i][j].character = ord("│");
+								if (E || W)
+									worldTiles[i][j].character = ord("─");
+							}
+							else if (num == 2)
+							{
+								if (N && S)
+									worldTiles[i][j].character = ord("│");
+								if (W && E)
+									worldTiles[i][j].character = ord("─");
+								if (W && S)
+									worldTiles[i][j].character = ord("┐");
+								if (S && E)
+									worldTiles[i][j].character = ord("┌");
+								if (E && N)
+									worldTiles[i][j].character = ord("└");
+								if (N && W)
+									worldTiles[i][j].character = ord("┘");
+							}
+							else if (num == 3)
+							{
+								if (W && N && E)
+									worldTiles[i][j].character = ord("┴");
+								if (N && W && S)
+									worldTiles[i][j].character = ord("┤");
+								if (W && S && E)
+									worldTiles[i][j].character = ord("┬");
+								if (N && E && S)
+									worldTiles[i][j].character = ord("├");
+							}
+							else if (num == 4)
+							{
+								worldTiles[i][j].character = ord("┼");
 							}
 						}
-
-						if (j - 1 > 0)
-						{
-							if (pathMask[i][j - 1])
-							{
-								N = true;
-								num++;
-							}
-						}
-
-						if (j + 1 < TILED_SIZE)
-						{
-							if (pathMask[i][j + 1])
-							{
-								S = true;
-								num++;
-							}
-						}
-
-						if (num == 1)
-						{
-							if (N || S)
-								worldTiles[i][j].character = ord("│");
-							if (E || W)
-								worldTiles[i][j].character = ord("─");
-						}
-						else if (num == 2)
-						{
-							if (N && S)
-								worldTiles[i][j].character = ord("│");
-							if (W && E)
-								worldTiles[i][j].character = ord("─");
-							if (W && S)
-								worldTiles[i][j].character = ord("┐");
-							if (S && E)
-								worldTiles[i][j].character = ord("┌");
-							if (E && N)
-								worldTiles[i][j].character = ord("└");
-							if (N && W)
-								worldTiles[i][j].character = ord("┘");
-						}
-						else if (num == 3)
-						{
-							if (W && N && E)
-								worldTiles[i][j].character = ord("┴");
-							if (N && W && S)
-								worldTiles[i][j].character = ord("┤");
-							if (W && S && E)
-								worldTiles[i][j].character = ord("┬");
-							if (N && E && S)
-								worldTiles[i][j].character = ord("├");
-						}
-						else if (num == 4)
-						{
-							worldTiles[i][j].character = ord("┼");
-						}
+						
 					}
 				}
 			}
-
 			
+			// TODO - Path Rivers
+
+			// TODO - Set Hub Population and Allegiance
+
+			// TODO - Add Features
+
+			// TODO - Generate Lore / Villains / Main Characters
 
 			// Cleanup
 			delete islandGradient;

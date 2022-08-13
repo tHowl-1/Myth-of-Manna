@@ -21,7 +21,7 @@ namespace mom
 	static WorldTile mountains("Mountains", ord("▲"), WHITE, false, false, false);
 	static WorldTile rocky("Rocky", ord("▲"), DK_GRAY, false, false, false);
 
-	static WorldTile river("River", ord("."), BLUE, true, false, false);
+	static WorldTile river("River", ord("."), LT_BLUE, true, false, false);
 	static WorldTile path("Path", ord("."), BROWN, false, true, false);
 	static WorldTile road("Road", ord("."), DK_GRAY, false, true, false);
 

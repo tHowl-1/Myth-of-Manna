@@ -16,7 +16,7 @@ const float shoreLevel = 0.2f;
 const float peakLevel = 0.95f;
 const float rockyLevel = 0.7f;
 const float forestLevel = 0.5f; 
-const float hubLevel = 0.97f;
+const float hubLevel = 0.98f;
 const float riverLevel = 0.8f;
 
 
