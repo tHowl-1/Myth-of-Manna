@@ -52,5 +52,7 @@ namespace mom
 
 		void draw_panel(int x, int y, int w, int h);
 
+		void draw_messages(int x, int y, int h);
+
 	};
 }

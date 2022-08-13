@@ -2,6 +2,7 @@
 #include "components/physics.h"
 #include "components/render.h"
 #include "mapgen.h"
+#include "logging.h"
 
 using namespace mom;
 
@@ -57,6 +58,8 @@ Validate WorldMovementAction::perform()
 	if (!world->worldTiles[dest_x][dest_y].walkable)
 		return Validate::INVALID; // Blocked by water
 
+	MessageLog::getInstance().writeMessage("You moved!", WHITE);
+
 	// Move player in given direction
 	worldMovementEvent.type = MovementEvent;
 	world->eventPass(&worldMovementEvent);
@@ -69,6 +72,7 @@ Validate WorldCreateAction::perform()
 	delete *world;
 	MapGenerator newWorldGen = MapGenerator();
 	*world = newWorldGen.generateWorld(params, player);
+	MessageLog::getInstance().clearLog();
 	return Validate::INVALID;
 }
 

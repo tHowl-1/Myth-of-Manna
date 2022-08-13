@@ -1,5 +1,6 @@
 ﻿#include "palette.h"
 #include "event.h"
+#include "logging.h"
 
 #include "rendering.h"
 
@@ -96,4 +97,17 @@ void TileRender::draw_menu_marker(int choice, int x, int y, int offset)
 void TileRender::draw_panel(int x, int y, int w, int h)
 {
 	tcod::draw_frame(*console, { x, y, w, h }, { ord("╔"), ord("═"), ord("╗"), ord("║"), ord(" "), ord("║"), ord("╚"), ord("═"), ord("╝") }, { { 255, 255, 255 } }, { {0, 0, 0} });
+}
+
+void TileRender::draw_messages(int x, int y, int h)
+{
+	int position = 0;
+	for (auto messageIterator = MessageLog::getInstance().log.begin(); messageIterator != MessageLog::getInstance().log.end(); messageIterator++)
+	{
+		Message currentMessage = *messageIterator;
+		if (position > h)
+			break;
+		tcod::print((*console), { x, y - position }, currentMessage.messageText + " x" + std::to_string(currentMessage.count), currentMessage.messageColor, BLACK);
+		position++;
+	}
 }

@@ -100,7 +100,7 @@ void MapView::on_render(TileRender* render, World* activeWorld, Entity* player)
     render->draw_screen_text("Message Log", 55, 34);
     render->draw_map_tiles(activeWorld->get_active_map());
     render->draw_entities(activeWorld->get_active_map());
-   
+    render->draw_messages(55, 51, 16);
 	return;
 }
 
@@ -148,6 +148,7 @@ void WorldView::on_render(TileRender* render, World* activeWorld, Entity* player
     render->draw_screen_text("Message Log", 55, 34);
     render->draw_world_tiles(activeWorld);
     render->draw_parties(activeWorld);
+    render->draw_messages(55, 51, 16);
     return;
 }
 
