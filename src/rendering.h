@@ -38,17 +38,22 @@ namespace mom
 		void draw_parties(World* world);
 
 		// Draws map tiles
-		void draw_map_tiles(Map* map);
+		void draw_map_tiles(Map* map, int offset);
 		// Draws world tiles
-		void draw_world_tiles(World* world);
+		void draw_world_tiles(World* world, int offset);
 
 		// Draws text at screen coords
 		void draw_screen_text(std::string text, int x, int y);
 		// Draws text at world coords
 		void draw_world_text(std::string text, int x, int y);
 
+		// Menu Stuff
 		// Draws menu position
 		void draw_menu_marker(int choice, int x, int y, int offset);
+
+		void draw_check_box(bool value, int x, int y);
+
+		void draw_progress_bar(float value, int x, int y, int w);
 
 		void draw_panel(int x, int y, int w, int h);
 

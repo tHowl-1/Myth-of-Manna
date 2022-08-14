@@ -27,7 +27,7 @@ Validate MapMovementAction::perform()
 	bool collideFail = false;
 	if (!map->inBounds(dest_x, dest_y))
 		collideFail = true;
-	if (!map->mapTiles[dest_x][dest_y].walkable)
+	else if (!map->mapTiles[dest_x][dest_y].walkable)
 		collideFail = true;
 	map->eventPass(&mapMovementEvent);
 	if (!mapMovementEvent.check)
@@ -73,6 +73,7 @@ Validate WorldCreateAction::perform()
 	MapGenerator newWorldGen = MapGenerator();
 	*world = newWorldGen.generateWorld(params, player);
 	MessageLog::getInstance().clearLog();
+	delete params;
 	return Validate::INVALID;
 }
 
@@ -114,7 +115,7 @@ Validate PlaceTileAction::perform()
 	performer->eventPass(&positionEvent);
 	int dest_x = positionEvent.x + positionEvent.dx, dest_y = positionEvent.y + positionEvent.dy;
 
-	map->mapTiles[dest_x][dest_y] = wall;
+	map->mapTiles[dest_x][dest_y] = woodWall;
 	return Validate::INVALID;
 }
 

@@ -4,10 +4,8 @@ namespace mom
 {
 	class World;
 	class Map;
-	class Params;
+	struct Params;
 	class Entity;
-	struct Region;
-
 
 	class MapGenerator
 	{
@@ -107,8 +105,13 @@ namespace mom
 		{
 			static TCODRandom* defaultGenerator = TCODRandom::getInstance();
 			// Generate Terrain
-			TCODHeightMap* islandGradient = generateGradient(true, true, true, true, true);
-			TCODHeightMap* polarGradient = generatePolarGradient();
+			TCODHeightMap* islandGradient = nullptr;
+			TCODHeightMap* polarGradient = nullptr;
+
+			if (params->island)
+				islandGradient = generateGradient(true, true, true, true, true);
+			if (params->polar)
+				polarGradient = generatePolarGradient();
 
 			TCODHeightMap* heightMap = generateNoiseMap(islandGradient, 0.15f, 4.0f, false, true);
 			TCODHeightMap* roughnessMap = generateNoiseMap(nullptr, 0.2f, 0.2f, false, false);
@@ -118,6 +121,13 @@ namespace mom
 			// Generate Features
 			TCODHeightMap* hubMap = generateNoiseMap(nullptr, 0.5f, 1.0f, false, true);
 			TCODHeightMap* riverMap = generateNoiseMap(islandGradient, 0.5f, 1.0f, false, true);
+
+			// Scale by parameters
+			heightMap->add(params->height - 1.0f);
+			roughnessMap->add(params->roughness - 1.0f);
+			temperatureMap->normalize(params->temperature - 1.0f, params->temperature);
+			moistureMap->normalize(params->moisture - 1.0f, params->moisture);
+
 
 			// Populate Tilemap
 			WorldTile worldTiles[TILED_SIZE][TILED_SIZE];
@@ -132,9 +142,9 @@ namespace mom
 						float moistValue = moistureMap->getValue(i, j);
 
 						// Define World Tile
-						if (heightValue < waterLevel)			// Flooded
+						if (heightValue < waterLevel + 0.1f * (((params->sealevel - 0.6f) / 0.2f) - 2))			// Flooded
 						{
-							if (heightValue < shoreLevel)
+							if (heightValue < shoreLevel + 0.1f * (((params->sealevel - 0.6f) / 0.2f) - 2))
 								worldTiles[i][j] = deepOcean;
 							else
 								worldTiles[i][j] = shallowOcean;
@@ -147,7 +157,9 @@ namespace mom
 						{
 							if (tempValue > 0.7f)
 							{
-								if (moistValue < 0.5f)
+								if (moistValue > 0.6f)
+									worldTiles[i][j] = rainforest;
+								else if (moistValue < 0.2f)
 									worldTiles[i][j] = desert;
 								else
 								{
@@ -157,10 +169,23 @@ namespace mom
 										worldTiles[i][j] = scrubland;
 								}
 							}
+							else if (tempValue < 0.2f)
+							{
+								if (moistValue > 0.5f)
+									worldTiles[i][j] = taiga;
+								else if (moistValue < 0.2f)
+									worldTiles[i][j] = desert;
+								else
+								{
+									worldTiles[i][j] = tundra;
+								}
+							}
 							else
 							{
 								if (moistValue > 0.5f)
 									worldTiles[i][j] = forest;
+								else if (moistValue < 0.2f)
+									worldTiles[i][j] = desert;
 								else
 								{
 									if ((i + j) % 2 == 0)
@@ -210,9 +235,18 @@ namespace mom
 
 						if (pathCollisionMap.isWalkable(i, j))
 						{
-							if (hubValue > hubLevel)
+							float scaledLevel;
+							if (params->population >= 1.0f)
 							{
-								worldTiles[i][j] = hub;
+								scaledLevel = - 0.05f * (((params->population - 0.6f) / 0.2f) - 2);
+							}
+							else
+							{
+								scaledLevel = -0.01f * (((params->population - 0.6f) / 0.2f) - 2);
+							}
+
+							if (hubValue > hubLevel + scaledLevel)
+							{
 								pathMask[i][j] = true;
 								
 								hubPoints.push(TilePosition(i, j, hubId));
@@ -230,6 +264,7 @@ namespace mom
 
 			// Calculate Paths
 			TCODDijkstra pathfinder = TCODDijkstra(&pathCollisionMap, 0.0f);
+			if (params->roads)
 			{
 				for (TilePosition* iterator = hubPoints.begin(); iterator != hubPoints.end(); iterator++)
 				{
@@ -288,8 +323,7 @@ namespace mom
 						{
 							int i, j;
 							pathfinder.walk(&i, &j);
-							if (worldTiles[i][j].tileName != "Hub")
-								pathMask[i][j] = true;
+							pathMask[i][j] = true;
 						}
 
 						// Mark Points as Connected
@@ -300,6 +334,7 @@ namespace mom
 
 			// Calculate Rivers
 			TCODDijkstra riverfinder = TCODDijkstra(&riverCollisionMap, 0.0f);
+			if (params->rivers)
 			{
 				for (TilePosition* iterator = riverPoints.begin(); iterator != riverPoints.end(); iterator++)
 				{
@@ -382,7 +417,7 @@ namespace mom
 					{
 						int i, j;
 						riverfinder.walk(&i, &j);
-						if (worldTiles[i][j].flooded)
+						if (worldTiles[i][j].tileName == shallowOcean.tileName || worldTiles[i][j].tileName == deepOcean.tileName)
 							break;
 						riverMask[i][j] = true;
 					}
@@ -395,7 +430,7 @@ namespace mom
 				{
 					for (int j = 0; j < TILED_SIZE; j++)
 					{
-						if (riverMask[i][j])
+						if (params->rivers && riverMask[i][j])
 						{
 							// Check edge neighbors
 							worldTiles[i][j] = river;
@@ -480,7 +515,7 @@ namespace mom
 								worldTiles[i][j].character = ord("┼");
 							}
 						}
-						if (pathMask[i][j])
+						if (params->roads && pathMask[i][j])
 						{
 							// Check edge neighbors
 							worldTiles[i][j] = path;
@@ -597,9 +632,249 @@ namespace mom
 		//                               MAP GENERATION
 		// --------------------------------------------------------------------------
 
-		Map* MapGenerator::generateMap(Region* region)
+		Map* MapGenerator::generateMap(WorldTile worldTile)
 		{
-			return nullptr;
+			TCODHeightMap* gradient = nullptr;
+			if (path.tileName == worldTile.tileName || river.tileName == worldTile.tileName)
+			{
+				gradient = generatePolarGradient();
+				gradient->scale(-1.0f);
+			}
+			TCODHeightMap* heightMap =   generateNoiseMap(gradient, 0.1f, 3.0f, false, true);
+			TCODHeightMap* moistureMap = generateNoiseMap(nullptr, 0.2f, 2.0f, false, false);
+			
+			TCODHeightMap* hubMap =		 generateNoiseMap(nullptr, 0.5f, 1.0f, false, false);
+			
+			
+			// Generate Map Tiles
+			Tile mapTiles[TILED_SIZE][TILED_SIZE];
+			{
+				for (int i = 0; i < TILED_SIZE; i++)
+				{
+					for (int j = 0; j < TILED_SIZE; j++)
+					{
+						float heightValue;
+						if (path.tileName == worldTile.tileName || river.tileName == worldTile.tileName)
+						{
+							if (worldTile.character == ord("─"))
+								heightValue = heightMap->getValue(i, j);
+							else
+								heightValue = heightMap->getValue(j, i);
+						}
+						else
+						{
+							heightValue = heightMap->getValue(i, j);
+						}
+
+						float moistValue = moistureMap->getValue(i, j);
+						float hubValue = hubMap->getValue(i, j);
+						if (deepOcean.tileName == worldTile.tileName)  // DEEP OCEAN
+						{
+							mapTiles[i][j] = deepWater;
+						}
+						else if (shallowOcean.tileName == worldTile.tileName)  // SHALLOW OCEAN
+						{
+							if (heightValue < 0.7f)
+							{
+								mapTiles[i][j] = shallowWater;
+								if (heightValue < 0.6f)
+								{
+									mapTiles[i][j] = deepWater;
+								}
+							}
+							else if (heightValue < 0.8)
+							{
+								mapTiles[i][j] = sand;
+							}
+							else
+							{
+								mapTiles[i][j] = grass;
+								if (moistValue > 0.5f)
+								{
+									mapTiles[i][j] = tallGrass;
+									
+								}
+								if (hubValue > hubLevel)
+									mapTiles[i][j] = palmTree;
+								else if (hubValue > hubLevel - 0.02f)
+									mapTiles[i][j] = flower;
+							}
+						}
+						else if (forest.tileName == worldTile.tileName) // FOREST
+						{
+							if (heightValue > 0.2f)
+							{
+								mapTiles[i][j] = grass;
+								if (moistValue > 0.8f)
+									mapTiles[i][j] = tallGrass;
+							}
+							else
+								mapTiles[i][j] = dirt;
+							if (hubValue > hubLevel - 0.05)
+								mapTiles[i][j] = broadleafTree;
+						}
+						else if (tundra.tileName == worldTile.tileName) // TUNDRA
+						{
+							if (heightValue > 0.3f)
+								mapTiles[i][j] = snow;
+							else
+								mapTiles[i][j] = dirt;
+							if (hubValue > hubLevel - 0.02)
+								mapTiles[i][j] = grass;
+						}
+						else if (taiga.tileName == worldTile.tileName) // TAIGA
+						{
+							if (heightValue > 0.2f)
+							{
+								mapTiles[i][j] = grass;
+								if (moistValue > 0.5f)
+									mapTiles[i][j] = snow;
+							}
+							else
+								mapTiles[i][j] = dirt;
+							if (hubValue > hubLevel - 0.05)
+								mapTiles[i][j] = pineTree;
+						}
+						else if (rainforest.tileName == worldTile.tileName) // RAINFOREST
+						{
+							if (heightValue < 0.15f)
+							{
+								mapTiles[i][j] = shallowWater;
+								if (heightValue < 0.1f)
+								{
+									mapTiles[i][j] = deepWater;
+								}
+							}
+							else if (heightValue < 0.2)
+							{
+								mapTiles[i][j] = dirt;
+							}
+							else
+							{
+								if (moistValue > 0.9f)
+									mapTiles[i][j] = tallGrass;
+								else if (moistValue > 0.2f)
+								{
+									mapTiles[i][j] = grass;
+									if (hubValue > hubLevel -0.1)
+										mapTiles[i][j] = broadleafTree;
+									else if (hubValue > hubLevel - 0.3)
+										mapTiles[i][j] = palmTree;
+								}
+								else
+								{
+									mapTiles[i][j] = dirt;
+								}
+							}
+						}
+						else if (desert.tileName == worldTile.tileName) // DESERT
+						{
+							if (heightValue > 0.15f)
+								mapTiles[i][j] = sand;
+							else
+								mapTiles[i][j] = dirt;
+							if (hubValue > hubLevel)
+								mapTiles[i][j] = cactus;
+						}
+						else if (mountains.tileName == worldTile.tileName) // MOUNTAINS
+						{
+							if (heightValue > 0.75f)
+								mapTiles[i][j] = stone;
+							else if (heightValue > 0.1f)
+							{
+								mapTiles[i][j] = rock;
+								if (moistValue > 0.4f)
+									mapTiles[i][j] = snow;
+							}
+							else
+								mapTiles[i][j] = dirt;
+						}
+						else if (rocky.tileName == worldTile.tileName) // ROCKY
+							if (heightValue > 0.85f)
+								mapTiles[i][j] = stone;
+							else
+							{
+								if (heightValue > 0.7f)
+									mapTiles[i][j] = grass;
+								else if (heightValue > 0.2f)
+									mapTiles[i][j] = rock;
+								else
+									mapTiles[i][j] = dirt;	
+								
+								if (hubValue > hubLevel)
+									mapTiles[i][j] = pineTree;
+							}
+						else if (path.tileName == worldTile.tileName) // PATH
+						{
+							if (heightValue < 0.3f)
+							{
+								mapTiles[i][j] = dirt;
+								if (heightValue < 0.2f)
+								{
+									mapTiles[i][j] = rock;
+								}
+							}
+							else
+							{
+								mapTiles[i][j] = grass;
+								if (moistValue > 0.5f)
+								{
+									mapTiles[i][j] = tallGrass;
+
+								}
+								if (hubValue > hubLevel)
+									mapTiles[i][j] = flower;
+							}
+						}
+						else if (river.tileName == worldTile.tileName) // RIVER
+						{
+							if (heightValue < 0.4f)
+							{
+								mapTiles[i][j] = shallowWater;
+								if (heightValue < 0.3f)
+								{
+									mapTiles[i][j] = deepWater;
+								}
+							}
+							else if (heightValue < 0.45)
+							{
+								mapTiles[i][j] = sand;
+							}
+							else
+							{
+								mapTiles[i][j] = grass;
+								if (moistValue > 0.5f)
+								{
+									mapTiles[i][j] = tallGrass;
+
+								}
+								if (hubValue > hubLevel)
+									mapTiles[i][j] = flower;
+							}
+						}
+						else											// GRASSLAND
+						{
+							if (heightValue > 0.1f)
+							{
+								mapTiles[i][j] = grass;
+								if (moistValue > 0.5f)
+									mapTiles[i][j] = tallGrass;
+							}
+							else
+								mapTiles[i][j] = dirt;
+							if (hubValue > hubLevel)
+								mapTiles[i][j] = flower;
+						}
+					}
+				}
+			}
+			 
+			delete heightMap;
+			delete moistureMap;
+			if (gradient != nullptr)
+				delete gradient;
+			delete hubMap;
+			return new Map(mapTiles);
 		}
 
 

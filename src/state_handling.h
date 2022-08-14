@@ -72,6 +72,10 @@ namespace mom
 		void upChoice(int numChoices);
 
 		void downChoice(int numChoices);
+
+		void toggleChoice(bool& value);
+
+		void incrementChoice(float& num, float min, float max, float increment);
 	};
 
 	// Overlays another handler
@@ -116,6 +120,8 @@ namespace mom
 
 	class NewGame : public Menu
 	{
+	private:
+		Params params;
 	public:
 		ActionOrHandler* handle_events(SDL_Event* event, Entity* player, World** activeWorld);
 

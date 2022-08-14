@@ -98,7 +98,7 @@ void MapView::on_render(TileRender* render, World* activeWorld, Entity* player)
     render->draw_screen_text("Information", 55, 1);
     render->draw_panel(54, 34, 41, 19);
     render->draw_screen_text("Message Log", 55, 34);
-    render->draw_map_tiles(activeWorld->get_active_map());
+    render->draw_map_tiles(activeWorld->get_active_map(), 0);
     render->draw_entities(activeWorld->get_active_map());
     render->draw_messages(55, 51, 16);
 	return;
@@ -120,7 +120,7 @@ ActionOrHandler* WorldView::handle_events(SDL_Event* event, Entity* player, Worl
         case SDLK_RIGHT:
             return newAction(new WorldMovementAction((*activeWorld)->playerParty, *activeWorld, 1, 0));
         case SDLK_r:
-            return newActionHandler(new WorldCreateAction(activeWorld, nullptr), new WorldView());
+            return newActionHandler(new WorldCreateAction(activeWorld, new Params()), new WorldView());
         case SDLK_RETURN:
             return newActionHandler(new EnterMapAction((*activeWorld)->playerParty, *activeWorld), new MapView());
 
@@ -146,7 +146,7 @@ void WorldView::on_render(TileRender* render, World* activeWorld, Entity* player
     render->draw_screen_text("Information", 55, 1);
     render->draw_panel(54, 34, 41, 19);
     render->draw_screen_text("Message Log", 55, 34);
-    render->draw_world_tiles(activeWorld);
+    render->draw_world_tiles(activeWorld, 0);
     render->draw_parties(activeWorld);
     render->draw_messages(55, 51, 16);
     return;
@@ -164,6 +164,24 @@ void Menu::downChoice(int numChoices)
     choice++;
     if (choice > numChoices - 1)
         choice = 0;
+}
+
+void Menu::toggleChoice(bool& value)
+{
+    if (value)
+        value = false;
+    else
+        value = true;
+}
+
+void Menu::incrementChoice(float& num, float min, float max, float increment)
+{
+    if (num + increment > max)
+        num = min;
+    else if (num + increment < min)
+        num = max;
+    else
+        num += increment;
 }
 
 // Menu Templates
@@ -203,7 +221,7 @@ ActionOrHandler* MainMenu::handle_events(SDL_Event* event, Entity* player, World
             switch (choice)
             {
             case 0: // NEW
-                return newHandler(new NewGame());
+                return newActionHandler(new WorldCreateAction(activeWorld, new Params()),new NewGame());
             case 1: // LOAD
                 return newHandler(new LoadGame());
             case 2: // OPTIONS
@@ -229,7 +247,7 @@ ActionOrHandler* MainMenu::handle_events(SDL_Event* event, Entity* player, World
 void MainMenu::on_render(TileRender* render, World* activeWorld, Entity* player)
 {
     // TODO - Draw background
-    int middle = render->console->w / 4;
+    int middle = 10;
     render->draw_screen_text("Main Menu", middle, 10);
     render->draw_screen_text("New", middle, 12);
     render->draw_screen_text("Load", middle, 14);
@@ -287,7 +305,7 @@ ActionOrHandler* DebugMenu::handle_events(SDL_Event* event, Entity* player, Worl
 
 void DebugMenu::on_render(TileRender* render, World* activeWorld, Entity* player)
 {
-    int middle = render->console->w / 4;
+    int middle = 10;
     render->draw_screen_text("Debug Menu", middle, 10);
     return;
 }
@@ -299,16 +317,48 @@ ActionOrHandler* NewGame::handle_events(SDL_Event* event, Entity* player, World*
         switch (event->key.keysym.sym) // Check key type
         {
         case SDLK_UP:
-            upChoice(1);
+            upChoice(12);
             break;
         case SDLK_DOWN:
-            downChoice(1);
+            downChoice(12);
             break;
         case SDLK_RETURN:
             switch (choice)
             {
-            case 0: // Generate
-                return newActionHandler(new WorldCreateAction(activeWorld, nullptr), new WorldView()); // TODO : Parameter creation and modification in handler
+            case 0: // Island Check
+                toggleChoice(params.island);
+                return newAction(new WorldCreateAction(activeWorld, new Params(params)));
+            case 1: // Polar Check
+                toggleChoice(params.polar);
+                return newAction(new WorldCreateAction(activeWorld, new Params(params)));
+            case 2: // Rivers Check
+                toggleChoice(params.rivers);
+                return newAction(new WorldCreateAction(activeWorld, new Params(params)));
+            case 3: // Roads Check
+                toggleChoice(params.roads);
+                return newAction(new WorldCreateAction(activeWorld, new Params(params)));
+            case 4: // Population Change
+                incrementChoice(params.population, 0.6f, 1.5f, 0.20f);
+                return newAction(new WorldCreateAction(activeWorld, new Params(params)));
+            case 5: // Temp Change
+                incrementChoice(params.temperature, 0.6f, 1.5f, 0.20f);
+                return newAction(new WorldCreateAction(activeWorld, new Params(params)));
+            case 6: // Moisture Change
+                incrementChoice(params.moisture, 0.6f, 1.5f, 0.20f);
+                return newAction(new WorldCreateAction(activeWorld, new Params(params)));
+            case 7: // Roughness Change
+                incrementChoice(params.roughness, 0.6f, 1.5f, 0.20f);
+                return newAction(new WorldCreateAction(activeWorld, new Params(params)));
+            case 8: // Height Change
+                incrementChoice(params.height, 0.6f, 1.5f, 0.20f);
+                return newAction(new WorldCreateAction(activeWorld, new Params(params)));
+            case 9: // Sea Level Change
+                incrementChoice(params.sealevel, 0.6f, 1.5f, 0.20f);
+                return newAction(new WorldCreateAction(activeWorld, new Params(params)));
+            case 10: // ReRoll
+                return newAction(new WorldCreateAction(activeWorld, new Params(params)));
+            case 11: // Begin
+                return newHandler(new WorldView());
             default:
                 break;
             }
@@ -329,9 +379,37 @@ ActionOrHandler* NewGame::handle_events(SDL_Event* event, Entity* player, World*
 
 void NewGame::on_render(TileRender* render, World* activeWorld, Entity* player)
 {
-    int middle = render->console->w / 4;
-    render->draw_screen_text("New Game", middle, 10);
-    render->draw_screen_text("Generate", middle, 12);
+    int middle = 10;
+    int x_offset = 18;
+    render->draw_panel(1, 1, 41, 52);
+    render->draw_panel(43, 1, 52, 52);
+    if ((activeWorld) != nullptr)
+        render->draw_world_tiles(activeWorld, 42);
+    render->draw_screen_text("Preview", 44, 1);
+    render->draw_screen_text("Preview", 2, 1);
+    render->draw_screen_text("New Game", middle, 8);
+    render->draw_screen_text("Island", middle, 12);
+    render->draw_check_box(params.island, middle + x_offset, 12);
+    render->draw_screen_text("Polar", middle, 14);
+    render->draw_check_box(params.polar, middle + x_offset, 14);
+    render->draw_screen_text("Rivers", middle, 16);
+    render->draw_check_box(params.rivers, middle + x_offset, 16);
+    render->draw_screen_text("Roads", middle, 18);
+    render->draw_check_box(params.roads, middle + x_offset, 18);
+    render->draw_screen_text("Population", middle, 20);
+    render->draw_progress_bar(params.population - 0.3f, middle + x_offset - 3, 20, 7);
+    render->draw_screen_text("Temperature", middle, 22);
+    render->draw_progress_bar(params.temperature - 0.3f, middle + x_offset - 3, 22, 7);
+    render->draw_screen_text("Moisture", middle, 24);
+    render->draw_progress_bar(params.moisture - 0.3f, middle + x_offset - 3, 24, 7);
+    render->draw_screen_text("Roughness", middle, 26);
+    render->draw_progress_bar(params.roughness - 0.3f, middle + x_offset - 3, 26, 7);
+    render->draw_screen_text("Height", middle, 28);
+    render->draw_progress_bar(params.height - 0.3f, middle + x_offset - 3, 28, 7);
+    render->draw_screen_text("Sea Level", middle, 30);
+    render->draw_progress_bar(params.sealevel - 0.3f, middle + x_offset - 3, 30, 7);
+    render->draw_screen_text("Re-Roll", middle, 32);
+    render->draw_screen_text("Generate", middle, 34);
     render->draw_menu_marker(choice, middle, 12, 2);
     return;
 }

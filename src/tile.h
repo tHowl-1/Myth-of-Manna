@@ -9,28 +9,33 @@ namespace mom
 	class Tile
 	{
 	public:
-		bool walkable;
+		bool walkable = true;
+
+		bool flooded = false;
+		bool transparent = true;
+		bool flammable = false;
+
+		std::string tileName = "";
 		int character;
 		tcod::ColorRGB color;
 		
-		Tile() : walkable(true), character(0x00), color(tcod::ColorRGB{ 0, 0, 0 }) {}
-		Tile(bool walk, int ch, tcod::ColorRGB col) : walkable(walk), character(ch), color(col) {}
+		Tile() : walkable(true), flooded(true), transparent(true), flammable(false), character(0x00), color(tcod::ColorRGB{ 0, 0, 0 }) {}
+		Tile(std::string tileName, bool walkable, bool flooded, bool transparent, bool flammable, int ch, tcod::ColorRGB col) : tileName(tileName), walkable(walkable), flooded(flooded), transparent(transparent), flammable(flammable), character(ch), color(col) {}
 	};
 
 	class WorldTile
 	{
 	public:
-		bool flooded = false;
 		bool walkable = true;
-		bool forested = false;
+		float cost = 1.0f;
 
 		std::string tileName = "";
 		int character = 0;
 		tcod::ColorRGB color;
 
-		WorldTile() : tileName(""), forested(false), flooded(false), walkable(true), character(0x00), color(tcod::ColorRGB{ 0, 0, 0 }) {}
-		WorldTile(std::string name, int character, tcod::ColorRGB color, bool flooded, bool walkable, bool forested)
-			: flooded(flooded), walkable(walkable), forested(forested), color(color), character(character), tileName(name) {}
+		WorldTile() : tileName(""), walkable(true),  character(0x00), color(tcod::ColorRGB{ 0, 0, 0 }), cost(1.0f) {}
+		WorldTile(std::string name, int character, tcod::ColorRGB color, bool walkable, float cost)
+			: walkable(walkable), color(color), character(character), tileName(name), cost(cost) {}
 	};
 
 	class Feature

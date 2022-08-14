@@ -40,14 +40,36 @@ namespace mom
 		bool road;
 	};
 
-	class Params
+	struct Params
 	{
-	public:
 		// World Generation Paramaters:
-		bool isPlains = false;
-		bool isRock = false;
+		bool island = true;
+		bool polar = true;
+		bool roads = true;
+		bool rivers = true;
 
-		Params( bool isPlains, bool isRock) : isPlains(isPlains), isRock(isRock) {}
+		float population = 1.0f;
+
+		float height = 1.0f;
+		float temperature = 1.0f;
+		float roughness = 1.0f;
+		float moisture = 1.0f;
+		float sealevel = 1.0f;
+
+		Params() {}
+		Params(const Params& oldParams)
+		{
+			island = oldParams.island;
+			polar = oldParams.polar;
+			roads = oldParams.roads;
+			population = oldParams.population;
+			rivers = oldParams.rivers;
+			height = oldParams.height;
+			temperature = oldParams.temperature;
+			roughness = oldParams.roughness;
+			sealevel = oldParams.sealevel;
+			
+		}
 	};
 
 	//Entity and tile container
@@ -58,6 +80,7 @@ namespace mom
 		// Monsters + Characters - in scene
 		std::vector<Entity*> activeEntities;
 		Map();
+		Map(Tile newMapTiles[TILED_SIZE][TILED_SIZE]);
 
 		// Gets an entity at the given location if it is movement blocking
 		void eventPass(Event* actionEvent);

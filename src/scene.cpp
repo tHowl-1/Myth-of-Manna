@@ -1,6 +1,7 @@
 ﻿#include "scene.h"
 #include "components/physics.h"
 #include "components/render.h"
+#include "mapgen.h"
 
 using namespace mom;
 
@@ -31,6 +32,17 @@ Map::Map()
 				mapTiles[i][j] = blue;
 			else
 				mapTiles[i][j] = red;
+		}
+	}
+}
+
+Map::Map(Tile newMapTiles[TILED_SIZE][TILED_SIZE])
+{
+	for (int i = 0; i < TILED_SIZE; i++)
+	{
+		for (int j = 0; j < TILED_SIZE; j++)
+		{
+			mapTiles[i][j] = newMapTiles[i][j];
 		}
 	}
 }
@@ -78,7 +90,8 @@ Map* World::get_map_at(int x, int y)
 {
 	if (regionTiles[x][y] == nullptr)
 	{
-		regionTiles[x][y] = new Map();
+		MapGenerator newMapGen = MapGenerator();
+		regionTiles[x][y] = newMapGen.generateMap(worldTiles[x][y]);
 	}
 	return regionTiles[x][y];
 }

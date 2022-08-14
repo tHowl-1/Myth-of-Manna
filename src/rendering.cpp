@@ -25,14 +25,14 @@ void TileRender::draw_entities(Map* map)
 	}
 }
 
-void TileRender::draw_map_tiles(Map* map)
+void TileRender::draw_map_tiles(Map* map, int offset)
 {
 	int screen_X, screen_Y;
 	for (int world_X = 0; world_X < TILED_SIZE; world_X++)
 	{
 		for (int world_Y = 0; world_Y < TILED_SIZE; world_Y++)
 		{
-			screen_X = world_X + MAP_OFFSET;
+			screen_X = world_X + MAP_OFFSET + offset;
 			screen_Y = world_Y + MAP_OFFSET;
 			console->at(screen_X, screen_Y).ch = map->mapTiles[world_X][world_Y].character;
 			console->at(screen_X, screen_Y).fg = map->mapTiles[world_X][world_Y].color;
@@ -59,14 +59,14 @@ void TileRender::draw_parties(World* world)
 	}
 }
 
-void TileRender::draw_world_tiles(World* world)
+void TileRender::draw_world_tiles(World* world, int offset)
 {
 	int screen_X, screen_Y;
 	for (int world_X = 0; world_X < TILED_SIZE; world_X++)
 	{
 		for (int world_Y = 0; world_Y < TILED_SIZE; world_Y++)
 		{
-			screen_X = world_X + MAP_OFFSET;
+			screen_X = world_X + MAP_OFFSET + offset;
 			screen_Y = world_Y + MAP_OFFSET;
 
 			console->at(screen_X, screen_Y).ch = world->worldTiles[world_X][world_Y].character;
@@ -92,6 +92,35 @@ void TileRender::draw_menu_marker(int choice, int x, int y, int offset)
 	int screen_Y = y + choice * offset;
 	console->at(screen_X, screen_Y).ch = ord(">");
 	console->at(screen_X, screen_Y).fg = WHITE;
+}
+
+void TileRender::draw_check_box(bool value, int x, int y)
+{
+	int screen_X = x;
+	int screen_Y = y;
+	console->at(screen_X, screen_Y).fg = WHITE;
+	if (value)
+		console->at(screen_X, screen_Y).ch = ord("◘");
+	else
+		console->at(screen_X, screen_Y).ch = ord("•");
+}
+
+void TileRender::draw_progress_bar(float value, int x, int y, int w)
+{
+	int screen_X = x;
+	int screen_Y = y;
+	console->at(screen_X, screen_Y).ch = ord("[");
+	console->at(screen_X, screen_Y).fg = WHITE;
+	for (int i = 1; i < w - 1; i++)
+	{
+		console->at(screen_X + i, screen_Y).fg = WHITE; 
+		if (i <= int(value * (w - 2))) //
+			console->at(screen_X + i, screen_Y).ch = ord("■");
+		else
+			console->at(screen_X + i, screen_Y).ch = ord("·");
+	}
+	console->at(screen_X + w - 1, screen_Y).ch = ord("]");
+	console->at(screen_X + w - 1, screen_Y).fg = WHITE;
 }
 
 void TileRender::draw_panel(int x, int y, int w, int h)
