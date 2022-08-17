@@ -3,6 +3,7 @@
 #include "components/render.h"
 #include "mapgen.h"
 #include "logging.h"
+#include "game_exceptions.h"
 
 using namespace mom;
 
@@ -58,7 +59,18 @@ Validate WorldMovementAction::perform()
 	if (!world->worldTiles[dest_x][dest_y].walkable)
 		return Validate::INVALID; // Blocked by water
 
-	MessageLog::getInstance().writeMessage("You moved!", WHITE);
+	//Message Writing
+	std::string strDirection = "ERROR";
+	if (dx == 0 && dy == -1)
+		strDirection = "north";
+	else if (dx == 0 && dy == 1)
+		strDirection = "south";
+	else if (dx == -1 && dy == 0)
+		strDirection = "west";
+	else if (dx == 1 && dy == 0)
+		strDirection = "east";
+
+	MessageLog::getInstance().writeMessage("You move " + strDirection, WHITE);
 
 	// Move player in given direction
 	worldMovementEvent.type = MovementEvent;

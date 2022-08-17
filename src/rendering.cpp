@@ -1,6 +1,7 @@
 ﻿#include "palette.h"
 #include "event.h"
 #include "logging.h"
+#include <sstream>
 
 #include "rendering.h"
 
@@ -133,9 +134,10 @@ void TileRender::draw_messages(int x, int y, int h)
 	int position = 0;
 	for (auto messageIterator = MessageLog::getInstance().log.begin(); messageIterator != MessageLog::getInstance().log.end(); messageIterator++)
 	{
-		Message currentMessage = *messageIterator;
 		if (position > h)
 			break;
+		Message currentMessage = *messageIterator;
+		std::stringstream stream(currentMessage.messageText);
 		tcod::print((*console), { x, y - position }, currentMessage.messageText + " x" + std::to_string(currentMessage.count), currentMessage.messageColor, BLACK);
 		position++;
 	}

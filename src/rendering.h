@@ -12,15 +12,6 @@ const int MAP_OFFSET = 2;
 
 namespace mom
 {
-	struct ColorHSV
-	{
-		float hue;
-		float sat;
-		float val;
-	public:
-		ColorHSV(float H, float S, float V) : hue(H), sat(S), val(V) {}
-	};
-
 	// 2D Tile Renderer
 	class TileRender
 	{
@@ -50,9 +41,9 @@ namespace mom
 		// Menu Stuff
 		// Draws menu position
 		void draw_menu_marker(int choice, int x, int y, int offset);
-
+		// Draws check box given bool value
 		void draw_check_box(bool value, int x, int y);
-
+		// Draws progress bar at screen coords
 		void draw_progress_bar(float value, int x, int y, int w);
 
 		void draw_panel(int x, int y, int w, int h);

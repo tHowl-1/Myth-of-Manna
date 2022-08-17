@@ -73,7 +73,7 @@ World::World(WorldTile newWorldTiles[TILED_SIZE][TILED_SIZE], Entity* newPlayer)
 	}
 
 	player = newPlayer;
-	playerParty = new Party(new Physics(24, 24, true), new Render(ord("&"), WHITE));
+	playerParty = new Party(new Physics(24, 24, true), new Render(player->render->character, WHITE));
 	playerParty->partyMembers[0] = player;
 }
 

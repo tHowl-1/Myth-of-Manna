@@ -1,5 +1,9 @@
 ﻿#include "palette.h"
+#include <exception>
+#include "logging.h"
+
 #include "engine.h"
+
 
 using namespace mom;
 
@@ -47,18 +51,26 @@ void Engine::validate_action(ActionOrHandler* actionOrHandler)
 {
 	if (actionOrHandler->isAction) // Action
 	{
-		switch (actionOrHandler->action->perform()) // Perform Action
+		try
 		{
-		case Validate::VALID:
-			// TODO - ai moves here
-			break;
-		case Validate::INVALID:
-			break;
-		case Validate::QUIT: // Quit
-			QUIT_FLAG = true;
-			break;
-		default:
-			break;
+			switch (actionOrHandler->action->perform()) // Perform Action
+			{
+			case Validate::VALID:
+				// TODO - ai moves here
+				break;
+			case Validate::INVALID:
+				break;
+			case Validate::QUIT: // Quit
+				QUIT_FLAG = true;
+				break;
+			default:
+				break;
+			}
+		}
+		catch (std::exception& e)
+		{
+			std::string errorMessage = e.what();
+			MessageLog::getInstance().writeMessage("Exception: " + errorMessage, RED);
 		}
 		delete actionOrHandler->action;
 	}

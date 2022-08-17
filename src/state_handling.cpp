@@ -386,7 +386,7 @@ void NewGame::on_render(TileRender* render, World* activeWorld, Entity* player)
     if ((activeWorld) != nullptr)
         render->draw_world_tiles(activeWorld, 42);
     render->draw_screen_text("Preview", 44, 1);
-    render->draw_screen_text("Preview", 2, 1);
+    render->draw_screen_text("Generation", 2, 1);
     render->draw_screen_text("New Game", middle, 8);
     render->draw_screen_text("Island", middle, 12);
     render->draw_check_box(params.island, middle + x_offset, 12);
@@ -409,7 +409,7 @@ void NewGame::on_render(TileRender* render, World* activeWorld, Entity* player)
     render->draw_screen_text("Sea Level", middle, 30);
     render->draw_progress_bar(params.sealevel - 0.3f, middle + x_offset - 3, 30, 7);
     render->draw_screen_text("Re-Roll", middle, 32);
-    render->draw_screen_text("Generate", middle, 34);
+    render->draw_screen_text("Begin", middle, 34);
     render->draw_menu_marker(choice, middle, 12, 2);
     return;
 }
