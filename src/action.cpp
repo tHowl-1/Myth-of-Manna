@@ -117,6 +117,7 @@ Validate ExitMapAction::perform()
 {
 	Event exitEvent = Event(ExitWorldEvent);
 	world->player.eventPass(&exitEvent);
+	delete world->get_active_map();
 	return Validate::INVALID;
 }
 

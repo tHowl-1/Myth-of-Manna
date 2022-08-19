@@ -7,6 +7,12 @@
 
 namespace mom
 {
+	static Entity nullEntity = Entity(
+		WorldC(),
+		PhysicsC(),
+		RenderC()
+	);
+
 	static Entity Player = Entity(
 		WorldC(0, 0, false),
 		PhysicsC(0, 0, true),

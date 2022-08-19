@@ -35,6 +35,14 @@ Map::Map()
 	}
 }
 
+Map::~Map()
+{
+	for (int i = 1; i < MAX_ENTITIES; i++)
+	{
+		delete activeEntities[i];
+	}
+}
+
 Map::Map(Tile newMapTiles[TILED_SIZE][TILED_SIZE])
 {
 	for (int i = 0; i < TILED_SIZE; i++)
@@ -48,13 +56,7 @@ Map::Map(Tile newMapTiles[TILED_SIZE][TILED_SIZE])
 
 World::World()
 {
-	for (int i = 0; i < TILED_SIZE; i++)
-	{
-		for (int j = 0; j < TILED_SIZE; j++)
-		{
-			regionTiles[i][j] = nullptr;
-		}
-	}
+	activeMap = nullptr;
 	player = Player;
 }
 
@@ -65,21 +67,21 @@ World::World(WorldTile newWorldTiles[TILED_SIZE][TILED_SIZE])
 	{
 		for (int j = 0; j < TILED_SIZE; j++)
 		{
-			regionTiles[i][j] = nullptr;
 			worldTiles[i][j] = newWorldTiles[i][j];
 		}
 	}
+	activeMap = nullptr;
 	player = Player;
 }
 
 Map* World::get_map_at(int x, int y)
 {
-	if (regionTiles[x][y] == nullptr)
+	if (activeMap == nullptr)
 	{
 		MapGenerator newMapGen = MapGenerator();
-		regionTiles[x][y] = newMapGen.generateMap(worldTiles[x][y]);
+		activeMap = newMapGen.generateMap(worldTiles[x][y]);
 	}
-	return regionTiles[x][y];
+	return activeMap;
 }
 
 Map* World::get_active_map()
@@ -92,4 +94,10 @@ Map* World::get_active_map()
 void World::eventPass(Event* actionEvent)
 {
 	player.eventPass(actionEvent);
+}
+
+World::~World()
+{
+	if (activeMap != nullptr)
+		delete activeMap;
 }

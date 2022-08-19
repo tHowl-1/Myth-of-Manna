@@ -78,9 +78,11 @@ namespace mom
 	public:
 		Tile mapTiles[TILED_SIZE][TILED_SIZE];
 		// Monsters + Characters - in scene
-		std::vector<Entity*> activeEntities;
+		Entity activeEntities[MAX_ENTITIES];
+
 		Map();
 		Map(Tile newMapTiles[TILED_SIZE][TILED_SIZE]);
+		~Map();
 
 		// Gets an entity at the given location if it is movement blocking
 		void eventPass(Event* actionEvent);
@@ -93,11 +95,12 @@ namespace mom
 	public:
 		Entity player;
 
-		Map* regionTiles[TILED_SIZE][TILED_SIZE];
+		Map* activeMap;
 		WorldTile worldTiles[TILED_SIZE][TILED_SIZE];
 
 		World();
 		World(WorldTile newWorldTiles[TILED_SIZE][TILED_SIZE]);
+		~World();
 
 		Map* get_map_at(int x, int y);
 		Map* get_active_map();
