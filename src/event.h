@@ -11,7 +11,14 @@ namespace mom
 		CollideEvent,
 		MovementEvent,
 		RenderEvent,
-		DirectionEvent
+		DirectionEvent,
+		WorldPositionEvent,
+		WorldMovementEvent,
+		WorldDirectionEvent,
+		WorldCollideEvent,
+		EnterWorldEvent,
+		ExitWorldEvent,
+		WorldRenderEvent
 	};
 
 	class Event

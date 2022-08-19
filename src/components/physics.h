@@ -6,9 +6,11 @@ using namespace mom;
 
 namespace mom
 {
-	class Physics
+	class PhysicsC
 	{
 	public:
+		bool null = false;
+
 		int x;
 		int y;
 
@@ -17,7 +19,8 @@ namespace mom
 
 		bool solid;
 
-		Physics(int x, int y, bool solid) : x(x), y(y), solid(solid) {}
+		PhysicsC() : null(true) {}
+		PhysicsC(int x, int y, bool solid) : x(x), y(y), solid(solid) {}
 
 		void receiveEvent(Event* actionEvent)
 		{

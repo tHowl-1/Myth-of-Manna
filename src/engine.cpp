@@ -84,13 +84,13 @@ void Engine::validate_action(ActionOrHandler* actionOrHandler)
 
 void Engine::update()
 {
-	activeHandler->on_render(render, activeWorld, activeWorld->player);
+	activeHandler->on_render(render, activeWorld);
 	context->present(console, viewportOptions);
 	TCOD_console_clear(console.get());
 	SDL_Event event;
 	SDL_WaitEvent(nullptr); //Optional, sleep until events are available (WARNING This is probably the source of pausing in realtime rendering)
 	while (SDL_PollEvent(&event)) {
 		context->convert_event_coordinates(event);  // Optional, converts pixel coordinates into tile coordinates (useful for mouse events)
-		validate_action(activeHandler->handle_events(&event, activeWorld->player, &activeWorld));
+		validate_action(activeHandler->handle_events(&event, &activeWorld));
 	}
 }

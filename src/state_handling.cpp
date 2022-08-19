@@ -2,7 +2,7 @@
 
 using namespace mom;
 
-ActionOrHandler* BaseHandler::handle_events(SDL_Event* event, Entity* player, World** activeWorld)
+ActionOrHandler* BaseHandler::handle_events(SDL_Event* event, World** activeWorld)
 {
     switch (event->type) {
     case SDL_KEYDOWN:
@@ -22,7 +22,7 @@ ActionOrHandler* BaseHandler::handle_events(SDL_Event* event, Entity* player, Wo
     return newAction(new Action()); // Return invalid blank action
 }
 
-void BaseHandler::on_render(TileRender* render, World* activeWorld, Entity* player)
+void BaseHandler::on_render(TileRender* render, World* activeWorld)
 {
     return; // Render nothing
 }
@@ -56,7 +56,7 @@ ActionOrHandler* BaseHandler::newActionHandler(Action* action, BaseHandler* hand
 }
 
 
-ActionOrHandler* MapView::handle_events(SDL_Event* event, Entity* player, World** activeWorld)
+ActionOrHandler* MapView::handle_events(SDL_Event* event, World** activeWorld)
 {
     switch (event->type) {
         case SDL_KEYDOWN:
@@ -64,18 +64,18 @@ ActionOrHandler* MapView::handle_events(SDL_Event* event, Entity* player, World*
             {
             // Player movement
             case SDLK_UP:
-                return newAction(new BumpAction(player, (*activeWorld)->get_active_map(), 0, -1));
+                return newAction(new BumpAction(&(*activeWorld)->player, (*activeWorld)->get_active_map(), 0, -1));
             case SDLK_DOWN:
-                return newAction(new BumpAction(player, (*activeWorld)->get_active_map(), 0, 1));
+                return newAction(new BumpAction(&(*activeWorld)->player, (*activeWorld)->get_active_map(), 0, 1));
             case SDLK_LEFT:
-                return newAction(new BumpAction(player, (*activeWorld)->get_active_map(), -1, 0));
+                return newAction(new BumpAction(&(*activeWorld)->player, (*activeWorld)->get_active_map(), -1, 0));
             case SDLK_RIGHT:
-                return newAction(new BumpAction(player, (*activeWorld)->get_active_map(), 1, 0));
+                return newAction(new BumpAction(&(*activeWorld)->player, (*activeWorld)->get_active_map(), 1, 0));
 
             case SDLK_SPACE:
-                return newAction(new PlaceTileAction(player, (*activeWorld)->get_active_map()));
+                return newAction(new PlaceTileAction(&(*activeWorld)->player, (*activeWorld)->get_active_map()));
             case SDLK_RETURN:
-                return newActionHandler(new ExitMapAction((*activeWorld)->playerParty, *activeWorld), new WorldView());
+                return newActionHandler(new ExitMapAction(*activeWorld), new WorldView());
             case SDLK_ESCAPE:
                 return newHandler(new PauseMenu(new MapView));
             default:
@@ -90,7 +90,7 @@ ActionOrHandler* MapView::handle_events(SDL_Event* event, Entity* player, World*
     return newAction(new Action()); // Return invalid blank action
 }
 
-void MapView::on_render(TileRender* render, World* activeWorld, Entity* player)
+void MapView::on_render(TileRender* render, World* activeWorld)
 {
     render->draw_panel(1, 1, 52, 52);
     render->draw_screen_text("Map", 2, 1);
@@ -104,7 +104,7 @@ void MapView::on_render(TileRender* render, World* activeWorld, Entity* player)
 	return;
 }
 
-ActionOrHandler* WorldView::handle_events(SDL_Event* event, Entity* player, World** activeWorld)
+ActionOrHandler* WorldView::handle_events(SDL_Event* event, World** activeWorld)
 {
     switch (event->type) {
     case SDL_KEYDOWN:
@@ -112,17 +112,17 @@ ActionOrHandler* WorldView::handle_events(SDL_Event* event, Entity* player, Worl
         {
             // Player movement
         case SDLK_UP:
-            return newAction(new WorldMovementAction((*activeWorld)->playerParty, *activeWorld, 0, -1));
+            return newAction(new WorldMovementAction(*activeWorld, 0, -1));
         case SDLK_DOWN:
-            return newAction(new WorldMovementAction((*activeWorld)->playerParty, *activeWorld, 0, 1));
+            return newAction(new WorldMovementAction(*activeWorld, 0, 1));
         case SDLK_LEFT:
-            return newAction(new WorldMovementAction((*activeWorld)->playerParty, *activeWorld, -1, 0));
+            return newAction(new WorldMovementAction(*activeWorld, -1, 0));
         case SDLK_RIGHT:
-            return newAction(new WorldMovementAction((*activeWorld)->playerParty, *activeWorld, 1, 0));
+            return newAction(new WorldMovementAction(*activeWorld, 1, 0));
         case SDLK_r:
             return newActionHandler(new WorldCreateAction(activeWorld, new Params()), new WorldView());
         case SDLK_RETURN:
-            return newActionHandler(new EnterMapAction((*activeWorld)->playerParty, *activeWorld), new MapView());
+            return newActionHandler(new EnterMapAction(*activeWorld), new MapView());
 
         case SDLK_ESCAPE:
             return newHandler(new PauseMenu(new WorldView));
@@ -138,7 +138,7 @@ ActionOrHandler* WorldView::handle_events(SDL_Event* event, Entity* player, Worl
     return newAction(new Action()); // Return invalid blank action
 }
 
-void WorldView::on_render(TileRender* render, World* activeWorld, Entity* player)
+void WorldView::on_render(TileRender* render, World* activeWorld)
 {   
     render->draw_panel(1, 1, 52, 52);
     render->draw_screen_text("World", 2, 1);
@@ -205,7 +205,7 @@ default:
     break;
   */
 
-ActionOrHandler* MainMenu::handle_events(SDL_Event* event, Entity* player, World** activeWorld)
+ActionOrHandler* MainMenu::handle_events(SDL_Event* event, World** activeWorld)
 {
     switch (event->type) {
     case SDL_KEYDOWN:
@@ -244,7 +244,7 @@ ActionOrHandler* MainMenu::handle_events(SDL_Event* event, Entity* player, World
     return newAction(new Action()); // Return invalid blank action
 }
 
-void MainMenu::on_render(TileRender* render, World* activeWorld, Entity* player)
+void MainMenu::on_render(TileRender* render, World* activeWorld)
 {
     // TODO - Draw background
     int middle = 10;
@@ -267,7 +267,7 @@ void DebugMenu::toggleDebug(int index)
     return;
 }
 
-ActionOrHandler* DebugMenu::handle_events(SDL_Event* event, Entity* player, World** activeWorld)
+ActionOrHandler* DebugMenu::handle_events(SDL_Event* event, World** activeWorld)
 {
 
     switch (event->type) {
@@ -303,14 +303,14 @@ ActionOrHandler* DebugMenu::handle_events(SDL_Event* event, Entity* player, Worl
     return newAction(new Action()); // Return invalid blank action
 }
 
-void DebugMenu::on_render(TileRender* render, World* activeWorld, Entity* player)
+void DebugMenu::on_render(TileRender* render, World* activeWorld)
 {
     int middle = 10;
     render->draw_screen_text("Debug Menu", middle, 10);
     return;
 }
 
-ActionOrHandler* NewGame::handle_events(SDL_Event* event, Entity* player, World** activeWorld)
+ActionOrHandler* NewGame::handle_events(SDL_Event* event, World** activeWorld)
 {
     switch (event->type) {
     case SDL_KEYDOWN:
@@ -377,7 +377,7 @@ ActionOrHandler* NewGame::handle_events(SDL_Event* event, Entity* player, World*
     return newAction(new Action()); // Return invalid blank action
 }
 
-void NewGame::on_render(TileRender* render, World* activeWorld, Entity* player)
+void NewGame::on_render(TileRender* render, World* activeWorld)
 {
     int middle = 10;
     int x_offset = 18;
@@ -414,7 +414,7 @@ void NewGame::on_render(TileRender* render, World* activeWorld, Entity* player)
     return;
 }
 
-ActionOrHandler* LoadGame::handle_events(SDL_Event* event, Entity* player, World** activeWorld)
+ActionOrHandler* LoadGame::handle_events(SDL_Event* event, World** activeWorld)
 {
     switch (event->type) {
     case SDL_KEYDOWN:
@@ -449,14 +449,14 @@ ActionOrHandler* LoadGame::handle_events(SDL_Event* event, Entity* player, World
     return newAction(new Action()); // Return invalid blank action
 }
 
-void LoadGame::on_render(TileRender* render, World* activeWorld, Entity* player)
+void LoadGame::on_render(TileRender* render, World* activeWorld)
 {
     int middle = render->console->w / 4;
     render->draw_screen_text("Load Game", middle, 10);
     return; // Render nothing
 }
 
-ActionOrHandler* MainOptions::handle_events(SDL_Event* event, Entity* player, World** activeWorld)
+ActionOrHandler* MainOptions::handle_events(SDL_Event* event, World** activeWorld)
 {
     switch (event->type) {
     case SDL_KEYDOWN:
@@ -491,14 +491,14 @@ ActionOrHandler* MainOptions::handle_events(SDL_Event* event, Entity* player, Wo
     return newAction(new Action()); // Return invalid blank action
 }
 
-void MainOptions::on_render(TileRender* render, World* activeWorld, Entity* player)
+void MainOptions::on_render(TileRender* render, World* activeWorld)
 {
     int middle = render->console->w / 4;
     render->draw_screen_text("Options", middle, 10);
     return; // Render nothing
 }
 
-ActionOrHandler* PauseMenu::handle_events(SDL_Event* event, Entity* player, World** activeWorld)
+ActionOrHandler* PauseMenu::handle_events(SDL_Event* event, World** activeWorld)
 {
     switch (event->type) {
     case SDL_KEYDOWN:
@@ -533,8 +533,8 @@ ActionOrHandler* PauseMenu::handle_events(SDL_Event* event, Entity* player, Worl
     return newAction(new Action()); // Return invalid blank action
 }
 
-void PauseMenu::on_render(TileRender* render, World* activeWorld, Entity* player)
+void PauseMenu::on_render(TileRender* render, World* activeWorld)
 {
-    parentHandler->on_render(render, activeWorld, player);
+    parentHandler->on_render(render, activeWorld);
     render->draw_panel(render->console->w / 2 - 8, render->console->h / 2 - 16, 16, 24);
 }

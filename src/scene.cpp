@@ -1,6 +1,5 @@
 ﻿#include "scene.h"
-#include "components/physics.h"
-#include "components/render.h"
+#include "entity_types.h"
 #include "mapgen.h"
 
 using namespace mom;
@@ -47,7 +46,6 @@ Map::Map(Tile newMapTiles[TILED_SIZE][TILED_SIZE])
 	}
 }
 
-
 World::World()
 {
 	for (int i = 0; i < TILED_SIZE; i++)
@@ -57,11 +55,11 @@ World::World()
 			regionTiles[i][j] = nullptr;
 		}
 	}
-	player = nullptr;
+	player = Player;
 }
 
 
-World::World(WorldTile newWorldTiles[TILED_SIZE][TILED_SIZE], Entity* newPlayer)
+World::World(WorldTile newWorldTiles[TILED_SIZE][TILED_SIZE])
 {
 	for (int i = 0; i < TILED_SIZE; i++)
 	{
@@ -71,19 +69,7 @@ World::World(WorldTile newWorldTiles[TILED_SIZE][TILED_SIZE], Entity* newPlayer)
 			worldTiles[i][j] = newWorldTiles[i][j];
 		}
 	}
-
-	player = newPlayer;
-	playerParty = new Party(new Physics(24, 24, true), new Render(player->render->character, WHITE));
-	playerParty->partyMembers[0] = player;
-}
-
-
-World::~World()
-{
-	if (player != nullptr)
-	{
-		delete player;
-	}
+	player = Player;
 }
 
 Map* World::get_map_at(int x, int y)
@@ -98,12 +84,12 @@ Map* World::get_map_at(int x, int y)
 
 Map* World::get_active_map()
 {
-	Event positionEvent = Event(PositionEvent);
-	playerParty->eventPass(&positionEvent);
+	Event positionEvent = Event(WorldPositionEvent);
+	player.eventPass(&positionEvent);
 	return get_map_at(positionEvent.x, positionEvent.y);
 }
 
 void World::eventPass(Event* actionEvent)
 {
-	playerParty->eventPass(actionEvent);
+	player.eventPass(actionEvent);
 }

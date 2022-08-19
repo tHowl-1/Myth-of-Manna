@@ -46,10 +46,9 @@ void TileRender::draw_parties(World* world)
 	int world_X, world_Y;
 	int screen_X, screen_Y;
 
-	Party* party = world->playerParty;
 	{
-		Event renderEvent = Event(RenderEvent);
-		party->eventPass(&renderEvent);
+		Event renderEvent = Event(WorldRenderEvent);
+		world->player.eventPass(&renderEvent);
 		world_X = renderEvent.x;
 		world_Y = renderEvent.y;
 		screen_X = world_X + MAP_OFFSET;

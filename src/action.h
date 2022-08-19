@@ -36,10 +36,9 @@ namespace mom
 	class WorldAction : public Action
 	{
 	public:
-		Party* performer;
 		World* world;
 
-		WorldAction(Party* performer, World* activeWorld) : performer(performer), world(activeWorld) {}
+		WorldAction(World* activeWorld) : world(activeWorld) {}
 	};
 
 	// Generates a world
@@ -60,14 +59,14 @@ namespace mom
 		int dx;
 		int dy;
 
-		WorldActionWithDirection(Party* performer, World* activeWorld, int dx, int dy) : WorldAction(performer, activeWorld), dx(dx), dy(dy) {}
+		WorldActionWithDirection(World* activeWorld, int dx, int dy) : WorldAction(activeWorld), dx(dx), dy(dy) {}
 	};
 
 	// Party movement on world map
 	class WorldMovementAction : public WorldActionWithDirection
 	{
 	public:
-		WorldMovementAction(Party* performer, World* activeWorld, int dx, int dy) : WorldActionWithDirection(performer, activeWorld, dx, dy) {}
+		WorldMovementAction(World* activeWorld, int dx, int dy) : WorldActionWithDirection(activeWorld, dx, dy) {}
 		Validate perform();
 	};
 
@@ -75,7 +74,7 @@ namespace mom
 	class EnterMapAction : public WorldAction
 	{
 	public:
-		EnterMapAction(Party* performer, World* activeWorld) : WorldAction(performer, activeWorld) {}
+		EnterMapAction(World* activeWorld) : WorldAction(activeWorld) {}
 		Validate perform();
 	};
 
@@ -83,7 +82,7 @@ namespace mom
 	class ExitMapAction : public WorldAction
 	{
 	public:
-		ExitMapAction(Party* performer, World* activeWorld) : WorldAction(performer, activeWorld) {}
+		ExitMapAction(World* activeWorld) : WorldAction(activeWorld) {}
 		Validate perform();
 	};
 

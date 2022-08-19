@@ -101,7 +101,7 @@ namespace mom
 			return noiseMap;
 		}
 
-		World* MapGenerator::generateWorld(Params* params, Entity* player)
+		World* MapGenerator::generateWorld(Params* params)
 		{
 			static TCODRandom* defaultGenerator = TCODRandom::getInstance();
 			// Generate Terrain
@@ -625,7 +625,7 @@ namespace mom
 			delete hubMap;
 			delete riverMap;
 
-			return new World(worldTiles, player);
+			return new World(worldTiles);
 		}
 
 		// --------------------------------------------------------------------------

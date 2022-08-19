@@ -91,20 +91,13 @@ namespace mom
 	class World
 	{
 	public:
-		Entity* player = nullptr;
-		Party* playerParty = nullptr;
+		Entity player;
 
 		Map* regionTiles[TILED_SIZE][TILED_SIZE];
 		WorldTile worldTiles[TILED_SIZE][TILED_SIZE];
 
-		// Characters - metagame npcs
-		// Entity* staticEntities[MAX_ENTITIES];
-
 		World();
-		World(WorldTile newWorldTiles[TILED_SIZE][TILED_SIZE], Entity* newPlayer);
-
-		~World();
-		
+		World(WorldTile newWorldTiles[TILED_SIZE][TILED_SIZE]);
 
 		Map* get_map_at(int x, int y);
 		Map* get_active_map();

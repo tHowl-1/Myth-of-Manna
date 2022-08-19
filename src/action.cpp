@@ -45,12 +45,12 @@ Validate MapMovementAction::perform()
 Validate WorldMovementAction::perform()
 {
 	// Set Party Direction
-	Event worldMovementEvent = Event(DirectionEvent, 0, 0, dx, dy);
-	performer->eventPass(&worldMovementEvent);
+	Event worldMovementEvent = Event(WorldDirectionEvent, 0, 0, dx, dy);
+	world->player.eventPass(&worldMovementEvent);
 
 	// Get Party Position and Direction
-	worldMovementEvent.type = PositionEvent;
-	performer->eventPass(&worldMovementEvent);
+	worldMovementEvent.type = WorldPositionEvent;
+	world->player.eventPass(&worldMovementEvent);
 	int dest_x = worldMovementEvent.x + worldMovementEvent.dx, dest_y = worldMovementEvent.y + worldMovementEvent.dy;
 
 	// Check collision
@@ -73,17 +73,16 @@ Validate WorldMovementAction::perform()
 	MessageLog::getInstance().writeMessage("You move " + strDirection, WHITE);
 
 	// Move player in given direction
-	worldMovementEvent.type = MovementEvent;
+	worldMovementEvent.type = WorldMovementEvent;
 	world->eventPass(&worldMovementEvent);
 	return Validate::VALID;
 }
 
 Validate WorldCreateAction::perform()
 {
-	Entity* player = new Entity(new Physics(0, 0, true), new Render(ord("@"), WHITE));
 	delete *world;
 	MapGenerator newWorldGen = MapGenerator();
-	*world = newWorldGen.generateWorld(params, player);
+	*world = newWorldGen.generateWorld(params);
 	MessageLog::getInstance().clearLog();
 	delete params;
 	return Validate::INVALID;
@@ -108,15 +107,16 @@ Validate QuitAction::perform()
 
 Validate EnterMapAction::perform()
 {
-	world->get_active_map()->activeEntities.push_back(world->player);
-	world->playerParty->inMap = true;
+	Event enterEvent = Event(EnterWorldEvent);
+	world->player.eventPass(&enterEvent);
+	world->get_active_map()->activeEntities.push_back(&world->player);
 	return Validate::INVALID;
 }
 
 Validate ExitMapAction::perform()
 {
-	world->get_active_map()->activeEntities.clear();
-	world->playerParty->inMap = false;
+	Event exitEvent = Event(ExitWorldEvent);
+	world->player.eventPass(&exitEvent);
 	return Validate::INVALID;
 }
 

@@ -21,9 +21,9 @@ namespace mom
 	class BaseHandler
 	{
 	public:
-		virtual ActionOrHandler* handle_events(SDL_Event* event, Entity* player, World** activeWorld);
+		virtual ActionOrHandler* handle_events(SDL_Event* event, World** activeWorld);
 
-		virtual void on_render(TileRender* render, World* activeWorld, Entity* player);
+		virtual void on_render(TileRender* render, World* activeWorld);
 
 		virtual ~BaseHandler() {}
 	protected:
@@ -47,17 +47,17 @@ namespace mom
 	class MapView : public BaseHandler
 	{
 	public:
-		ActionOrHandler* handle_events(SDL_Event* event, Entity* player, World** activeWorld);
+		ActionOrHandler* handle_events(SDL_Event* event, World** activeWorld);
 
-		void on_render(TileRender* render, World* activeWorld, Entity* player);
+		void on_render(TileRender* render, World* activeWorld);
 	};
 
 	class WorldView : public BaseHandler
 	{
 	public:
-		ActionOrHandler* handle_events(SDL_Event* event, Entity* player, World** activeWorld);
+		ActionOrHandler* handle_events(SDL_Event* event, World** activeWorld);
 
-		void on_render(TileRender* render, World* activeWorld, Entity* player);
+		void on_render(TileRender* render, World* activeWorld);
 	};
 
 	// Secondary Classes
@@ -103,9 +103,9 @@ namespace mom
 	class MainMenu : public Menu
 	{
 	public:
-		ActionOrHandler* handle_events(SDL_Event* event, Entity* player, World** activeWorld);
+		ActionOrHandler* handle_events(SDL_Event* event, World** activeWorld);
 
-		void on_render(TileRender* render, World* activeWorld, Entity* player);
+		void on_render(TileRender* render, World* activeWorld);
 	};	
 
 	class DebugMenu : public Menu
@@ -113,9 +113,9 @@ namespace mom
 	private:
 		void toggleDebug(int index);
 	public:
-		ActionOrHandler* handle_events(SDL_Event* event, Entity* player, World** activeWorld);
+		ActionOrHandler* handle_events(SDL_Event* event, World** activeWorld);
 
-		void on_render(TileRender* render, World* activeWorld, Entity* player);
+		void on_render(TileRender* render, World* activeWorld);
 	};
 
 	class NewGame : public Menu
@@ -123,33 +123,33 @@ namespace mom
 	private:
 		Params params;
 	public:
-		ActionOrHandler* handle_events(SDL_Event* event, Entity* player, World** activeWorld);
+		ActionOrHandler* handle_events(SDL_Event* event, World** activeWorld);
 
-		void on_render(TileRender* render, World* activeWorld, Entity* player);
+		void on_render(TileRender* render, World* activeWorld);
 	};
 
 	class LoadGame : public Menu
 	{
 	public:
-		ActionOrHandler* handle_events(SDL_Event* event, Entity* player, World** activeWorld);
+		ActionOrHandler* handle_events(SDL_Event* event, World** activeWorld);
 
-		void on_render(TileRender* render, World* activeWorld, Entity* player);
+		void on_render(TileRender* render, World* activeWorld);
 	};
 
 	class MainOptions : public Menu
 	{
 	public:
-		ActionOrHandler* handle_events(SDL_Event* event, Entity* player, World** activeWorld);
+		ActionOrHandler* handle_events(SDL_Event* event, World** activeWorld);
 
-		void on_render(TileRender* render, World* activeWorld, Entity* player);
+		void on_render(TileRender* render, World* activeWorld);
 	};
 
 	class PauseMenu : public PopUpMenu
 	{
 	public:
-		ActionOrHandler* handle_events(SDL_Event* event, Entity* player, World** activeWorld);
+		ActionOrHandler* handle_events(SDL_Event* event, World** activeWorld);
 
-		void on_render(TileRender* render, World* activeWorld, Entity* player);
+		void on_render(TileRender* render, World* activeWorld);
 
 		PauseMenu(BaseHandler* parent) : PopUpMenu(parent) {}
 	};
