@@ -109,7 +109,7 @@ Validate EnterMapAction::perform()
 {
 	Event enterEvent = Event(EnterWorldEvent);
 	world->player.eventPass(&enterEvent);
-	world->get_active_map()->activeEntities.push_back(&world->player);
+	world->get_active_map()->activeEntityPointers.push_back(&world->player);
 	return Validate::INVALID;
 }
 
@@ -117,7 +117,6 @@ Validate ExitMapAction::perform()
 {
 	Event exitEvent = Event(ExitWorldEvent);
 	world->player.eventPass(&exitEvent);
-	delete world->get_active_map();
 	return Validate::INVALID;
 }
 
@@ -131,4 +130,5 @@ Validate PlaceTileAction::perform()
 	map->mapTiles[dest_x][dest_y] = woodWall;
 	return Validate::INVALID;
 }
+
 

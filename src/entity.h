@@ -3,20 +3,22 @@
 // Dependancies
 #include <libtcod.hpp>
 #include <SDL2/SDL.h>
+#include <optional>
 
 #include "event.h"
 
 #include "components/world.h"
 #include "components/physics.h"
 #include "components/render.h"
+#include "components/open.h"
+#include "components/heal.h"
+#include "components/inventory.h"
+#include "components/description.h"
 
 const int MAX_MEMBERS = 6;
 
 //Ai*			ai				= nullptr;
-//Consumable*	consumable		= nullptr;
-//Equippable*	equippable		= nullptr;
 //Inventory*	inventory		= nullptr;
-//Interactable* interactable	= nullptr;
 //Soul*			soul			= nullptr;
 
 namespace mom
@@ -25,19 +27,31 @@ namespace mom
 	{
 	public:
 		//Components
-		WorldC world;
 		PhysicsC physics;
 		RenderC render;
+		DescriptionC description;
+		WorldC world;
+		OpenC open;
+		HealC heal;
+		InventoryC inventory;
 
 		Entity() {}
 		Entity(
-			WorldC world,
 			PhysicsC physics,
-			RenderC render)
+			RenderC render,
+			DescriptionC description,
+			WorldC world,
+			OpenC open,
+			HealC heal,
+			InventoryC inventory)
 			:
-			world(world),
 			physics(physics),
-			render(render)
+			render(render),
+			description(description),
+			world(world),
+			open(open),
+			heal(heal),
+			inventory(inventory)
 		{}
 
 		void eventPass(Event* actionEvent);

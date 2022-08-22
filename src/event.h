@@ -18,7 +18,13 @@ namespace mom
 		WorldCollideEvent,
 		EnterWorldEvent,
 		ExitWorldEvent,
-		WorldRenderEvent
+		WorldRenderEvent,
+		ConsumeEvent,
+		InteractEvent,
+		NameEvent,
+		DescribeEvent,
+		RetrieveEvent,
+		FillEvent
 	};
 
 	class Event
@@ -34,6 +40,7 @@ namespace mom
 		int dx = 0, dy = 0;
 		int amount = -1;
 		bool check = true;
+		void* thing = nullptr;
 
 		Event(EventType name) : type(name){}
 		Event(EventType name, int x, int y) : type(name), x(x), y(y) {}

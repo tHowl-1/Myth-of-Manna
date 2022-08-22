@@ -17,7 +17,7 @@ bool World::inBounds(int x, int y)
 
 void Map::eventPass(Event* actionEvent)
 {
-	for (Entity* entity : activeEntities)
+	for (Entity* entity : activeEntityPointers)
 		entity->eventPass(actionEvent);
 }
 
@@ -35,14 +35,6 @@ Map::Map()
 	}
 }
 
-Map::~Map()
-{
-	for (int i = 1; i < MAX_ENTITIES; i++)
-	{
-		delete activeEntities[i];
-	}
-}
-
 Map::Map(Tile newMapTiles[TILED_SIZE][TILED_SIZE])
 {
 	for (int i = 0; i < TILED_SIZE; i++)
@@ -56,7 +48,14 @@ Map::Map(Tile newMapTiles[TILED_SIZE][TILED_SIZE])
 
 World::World()
 {
-	activeMap = nullptr;
+	for (int i = 0; i < TILED_SIZE; i++)
+	{
+		for (int j = 0; j < TILED_SIZE; j++)
+		{
+			regionTiles[i][j] = nullptr;
+			worldTiles[i][j] = grassland;
+		}
+	}
 	player = Player;
 }
 
@@ -67,21 +66,21 @@ World::World(WorldTile newWorldTiles[TILED_SIZE][TILED_SIZE])
 	{
 		for (int j = 0; j < TILED_SIZE; j++)
 		{
+			regionTiles[i][j] = nullptr;
 			worldTiles[i][j] = newWorldTiles[i][j];
 		}
 	}
-	activeMap = nullptr;
 	player = Player;
 }
 
 Map* World::get_map_at(int x, int y)
 {
-	if (activeMap == nullptr)
+	if (regionTiles[x][y] == nullptr)
 	{
 		MapGenerator newMapGen = MapGenerator();
-		activeMap = newMapGen.generateMap(worldTiles[x][y]);
+		regionTiles[x][y] = newMapGen.generateMap(worldTiles[x][y]);
 	}
-	return activeMap;
+	return regionTiles[x][y];
 }
 
 Map* World::get_active_map()
@@ -98,6 +97,12 @@ void World::eventPass(Event* actionEvent)
 
 World::~World()
 {
-	if (activeMap != nullptr)
-		delete activeMap;
+	for (int i = 0; i < TILED_SIZE; i++)
+	{
+		for (int j = 0; j < TILED_SIZE; j++)
+		{
+			if (regionTiles[i][j] != nullptr)
+				delete regionTiles[i][j];
+		}
+	}
 }

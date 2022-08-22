@@ -12,7 +12,7 @@ void TileRender::draw_entities(Map* map)
 	int world_X, world_Y;
 	int screen_X, screen_Y;
 
-	for (Entity* entity : map->activeEntities)
+	for (Entity* entity : map->activeEntityPointers)
 	{
 		Event renderEvent = Event(RenderEvent);
 		entity->eventPass(&renderEvent);
@@ -139,5 +139,15 @@ void TileRender::draw_messages(int x, int y, int h)
 		std::stringstream stream(currentMessage.messageText);
 		tcod::print((*console), { x, y - position }, currentMessage.messageText + " x" + std::to_string(currentMessage.count), currentMessage.messageColor, BLACK);
 		position++;
+	}
+}
+
+void TileRender::draw_inventory_list(World* world, int x, int y, int h)
+{
+	int position = 0;
+	for (auto item : world->player.inventory.storedEntities)
+	{
+		tcod::print((*console), { x, y + position }, item->description.name, WHITE, BLACK);
+		position += 2;
 	}
 }

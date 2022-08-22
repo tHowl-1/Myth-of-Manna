@@ -21,7 +21,7 @@ file(
     CONFIGURE_DEPENDS  # Automatically reconfigure if source files are added/removed.
     ${PROJECT_SOURCE_DIR}/src/*.cpp
 )
-add_executable(${PROJECT_NAME} ${SOURCE_FILES})
+add_executable(${PROJECT_NAME} ${SOURCE_FILES} "src/components/consume.h")
 
 # FIXME Works to copy tileset except this is really hacky, setup to copy all png's maybe? and also fix file location?
 FILE(COPY data/16x16-sb-ascii.png DESTINATION "${PROJECT_BINARY_DIR}/bin")

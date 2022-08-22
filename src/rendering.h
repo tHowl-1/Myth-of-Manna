@@ -50,5 +50,7 @@ namespace mom
 
 		void draw_messages(int x, int y, int h);
 
+		void draw_inventory_list(World* world, int x, int y, int h);
+
 	};
 }
