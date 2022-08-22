@@ -24,7 +24,10 @@ namespace mom
 		NameEvent,
 		DescribeEvent,
 		RetrieveEvent,
-		FillEvent
+		FillEvent,
+		HideEvent,
+		ShowEvent,
+		IndexRetrieveEvent
 	};
 
 	class Event

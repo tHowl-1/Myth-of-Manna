@@ -80,12 +80,14 @@ namespace mom
 
 		// Monsters + Characters - in scene
 		std::vector<Entity*> activeEntityPointers;
-		std::vector<Entity> activeEntities;
+		std::vector<Entity> staticEntityStorage;
 
 		Map();
 		Map(Tile newMapTiles[TILED_SIZE][TILED_SIZE]);
 
-		// Gets an entity at the given location if it is movement blocking
+		Entity* get_entity_at_location(int x, int y);
+		void sort_entity_pointers_for_rendering();
+		void spawn_entity_copy_at(Entity entity, int x, int y);
 		void eventPass(Event* actionEvent);
 		bool inBounds(int x, int y);
 	};

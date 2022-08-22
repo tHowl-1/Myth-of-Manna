@@ -153,4 +153,14 @@ namespace mom
 
 		PauseMenu(BaseHandler* parent) : PopUpMenu(parent) {}
 	};
+
+	class InventoryMenu : public PopUpMenu
+	{
+	public:
+		ActionOrHandler* handle_events(SDL_Event* event, World** activeWorld);
+
+		void on_render(TileRender* render, World* activeWorld);
+
+		InventoryMenu(BaseHandler* parent) : PopUpMenu(parent) {}
+	};
 }

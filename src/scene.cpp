@@ -1,4 +1,6 @@
-﻿#include "scene.h"
+﻿#include <iostream>
+
+#include "scene.h"
 #include "entity_types.h"
 #include "mapgen.h"
 
@@ -105,4 +107,43 @@ World::~World()
 				delete regionTiles[i][j];
 		}
 	}
+}
+
+Entity* Map::get_entity_at_location(int x, int y)
+{
+	for (auto entity : activeEntityPointers) {
+		Event positionEvent = Event(PositionEvent);
+		entity->eventPass(&positionEvent);
+		if (positionEvent.x == x && positionEvent.y == y)
+			return entity;
+	}
+	return nullptr;
+}
+
+void Map::spawn_entity_copy_at(Entity entity, int x, int y)
+{
+	Entity tempEntity = entity;
+	staticEntityStorage.push_back(tempEntity);
+	int position = staticEntityStorage.size() - 1;
+	Entity* newEntity = &(staticEntityStorage[position]);
+
+	// Instantiate location:
+	Event movementEvent = Event(MovementEvent);
+	movementEvent.x = x;
+	movementEvent.y = y;
+	newEntity->eventPass(&movementEvent);
+
+	// Copy pointer to pointer array:
+	activeEntityPointers.push_back(newEntity);
+
+	for (auto entity : activeEntityPointers) {
+		std::cout << entity->description.name << std::endl;
+	}
+}
+
+void Map::sort_entity_pointers_for_rendering()
+{
+	std::sort(activeEntityPointers.begin(), activeEntityPointers.end(), [](Entity* a, Entity* b) {
+		return a->sortPosition < b->sortPosition;
+	});
 }

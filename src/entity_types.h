@@ -8,6 +8,7 @@
 namespace mom
 {
 	static Entity nullEntity = Entity(
+		Object,
 		PhysicsC(),
 		RenderC(),
 		DescriptionC(),
@@ -18,7 +19,8 @@ namespace mom
 	);
 
 	static Entity Player = Entity(
-		PhysicsC(0, 0, true),
+		Actor,
+		PhysicsC(0, 0, true, false),
 		RenderC(ord("@"), WHITE),
 		DescriptionC("The Player", "A noble adventurer on a grandiose quest!"),
 		WorldC(0, 0, false),
@@ -28,7 +30,8 @@ namespace mom
 	);
 
 	static Entity Goblin = Entity(
-		PhysicsC(0, 0, true),
+		Actor,
+		PhysicsC(0, 0, true, false),
 		RenderC(ord("g"), LT_GREEN),
 		DescriptionC("Goblin", "A horrible cave creature and gold theif."),
 		WorldC(),
@@ -38,7 +41,8 @@ namespace mom
 	);
 
 	static Entity Door = Entity(
-		PhysicsC(0, 0, true),
+		Object,
+		PhysicsC(0, 0, true, false),
 		RenderC(ord("+"), BROWN),
 		DescriptionC("Door", "A sturdy door."),
 		WorldC(),
@@ -48,7 +52,8 @@ namespace mom
 	);
 
 	static Entity Potion = Entity(
-		PhysicsC(0, 0, true),
+		Item,
+		PhysicsC(0, 0, false, true),
 		RenderC(ord("!"), RED),
 		DescriptionC("Potion", "A bottle of unasuming red liquid."),
 		WorldC(),

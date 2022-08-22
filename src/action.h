@@ -140,6 +140,35 @@ namespace mom
 		BumpAction(Entity* performer, Map* activeMap, int dx, int dy) : MapActionWithDirection(performer, activeMap, dx, dy) {}
 		Validate perform();
 	};
-	
+
+	class GrabAction : public MapAction
+	{
+	public:
+		GrabAction(Entity* performer, Map* activeMap) : MapAction(performer, activeMap) {}
+		Validate perform();
+	};
+
+	class DropAction : public MapAction
+	{
+	public:
+		int choice;
+
+		DropAction(Entity* performer, Map* activeMap, int choice) : MapAction(performer, activeMap), choice(choice) {}
+		Validate perform();
+	};
+
+	class DumpAction : public MapAction
+	{
+	public:
+		DumpAction(Entity* performer, Map* activeMap) : MapAction(performer, activeMap) {}
+		Validate perform();
+	};
+
+	class SpawnPotionAction : public MapAction
+	{
+	public:
+		SpawnPotionAction(Entity* performer, Map* activeMap) : MapAction(performer, activeMap) {}
+		Validate perform();
+	};
 	
 }

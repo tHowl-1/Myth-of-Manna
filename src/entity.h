@@ -15,6 +15,14 @@
 #include "components/inventory.h"
 #include "components/description.h"
 
+enum RenderPos:char
+{
+	Object,
+	Item,
+	Corpse,
+	Actor,
+};
+
 const int MAX_MEMBERS = 6;
 
 //Ai*			ai				= nullptr;
@@ -26,6 +34,8 @@ namespace mom
 	class Entity
 	{
 	public:
+		RenderPos sortPosition;
+
 		//Components
 		PhysicsC physics;
 		RenderC render;
@@ -37,6 +47,7 @@ namespace mom
 
 		Entity() {}
 		Entity(
+			RenderPos sortPosition,
 			PhysicsC physics,
 			RenderC render,
 			DescriptionC description,
@@ -45,6 +56,7 @@ namespace mom
 			HealC heal,
 			InventoryC inventory)
 			:
+			sortPosition(sortPosition),
 			physics(physics),
 			render(render),
 			description(description),

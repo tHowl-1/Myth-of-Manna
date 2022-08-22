@@ -72,6 +72,17 @@ ActionOrHandler* MapView::handle_events(SDL_Event* event, World** activeWorld)
             case SDLK_RIGHT:
                 return newAction(new BumpAction(&(*activeWorld)->player, (*activeWorld)->get_active_map(), 1, 0));
 
+            case SDLK_g:
+                return newAction(new GrabAction(&(*activeWorld)->player, (*activeWorld)->get_active_map()));
+            case SDLK_d:
+                return newAction(new DumpAction(&(*activeWorld)->player, (*activeWorld)->get_active_map()));
+
+            case SDLK_p:
+                return newAction(new SpawnPotionAction(&(*activeWorld)->player, (*activeWorld)->get_active_map()));
+
+            case SDLK_i:
+                return newHandler(new InventoryMenu(new MapView));
+
             case SDLK_SPACE:
                 return newAction(new PlaceTileAction(&(*activeWorld)->player, (*activeWorld)->get_active_map()));
             case SDLK_RETURN:
@@ -538,3 +549,49 @@ void PauseMenu::on_render(TileRender* render, World* activeWorld)
     parentHandler->on_render(render, activeWorld);
     render->draw_panel(render->console->w / 2 - 8, render->console->h / 2 - 16, 16, 24);
 }
+
+ActionOrHandler* InventoryMenu::handle_events(SDL_Event* event, World** activeWorld)
+{
+    switch (event->type) {
+    case SDL_KEYDOWN:
+        switch (event->key.keysym.sym) // Check key type
+        {
+        case SDLK_UP:
+            upChoice(1);
+            break;
+        case SDLK_DOWN:
+            downChoice(1);
+            break;
+        case SDLK_RETURN:
+            switch (choice)
+            {
+            case 0: // <- MENU OPTIONS HERE
+                break;
+            default:
+                break;
+            }
+            break;
+        case SDLK_ESCAPE:
+            return newHandler(parentHandler);
+        default:
+            break;
+        }
+        break;
+    case SDL_QUIT: // Exit the program on window close
+        return newAction(new QuitAction());
+    default:
+        break;
+    }
+    return newAction(new Action()); // Return invalid blank action
+}
+
+void InventoryMenu::on_render(TileRender* render, World* activeWorld)
+{
+    parentHandler->on_render(render, activeWorld);
+    render->draw_panel(54, 1, 41, 32);
+    render->draw_screen_text("Inventory", 55, 1);
+    render->draw_inventory_list(activeWorld, 56, 36, 20);
+}
+
+
+

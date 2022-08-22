@@ -11,11 +11,15 @@ void TileRender::draw_entities(Map* map)
 {
 	int world_X, world_Y;
 	int screen_X, screen_Y;
-
+	map->sort_entity_pointers_for_rendering();
 	for (Entity* entity : map->activeEntityPointers)
 	{
 		Event renderEvent = Event(RenderEvent);
 		entity->eventPass(&renderEvent);
+
+		if (renderEvent.check = false)
+			continue;
+
 		world_X = renderEvent.x;
 		world_Y = renderEvent.y;
 		screen_X = world_X + MAP_OFFSET;
@@ -145,8 +149,7 @@ void TileRender::draw_messages(int x, int y, int h)
 void TileRender::draw_inventory_list(World* world, int x, int y, int h)
 {
 	int position = 0;
-	for (auto item : world->player.inventory.storedEntities)
-	{
+	for (auto item : world->player.inventory.storedEntities) {
 		tcod::print((*console), { x, y + position }, item->description.name, WHITE, BLACK);
 		position += 2;
 	}

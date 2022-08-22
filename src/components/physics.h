@@ -19,8 +19,12 @@ namespace mom
 
 		bool solid;
 
+		bool pocketable;
+
+		bool existant = true;
+
 		PhysicsC() : null(true) {}
-		PhysicsC(int x, int y, bool solid) : x(x), y(y), solid(solid) {}
+		PhysicsC(int x, int y, bool solid, bool pocketable) : x(x), y(y), solid(solid), pocketable(pocketable) {}
 
 		void receiveEvent(Event* actionEvent)
 		{
@@ -33,7 +37,7 @@ namespace mom
 					actionEvent->dy = dy;
 					break;
 				case CollideEvent:
-					if (actionEvent->x + actionEvent->dx == x && actionEvent->y + actionEvent->dy == y)
+					if (actionEvent->x + actionEvent->dx == x && actionEvent->y + actionEvent->dy == y && solid)
 						actionEvent->check = false;
 					break;
 				case MovementEvent:
@@ -45,10 +49,17 @@ namespace mom
 				case RenderEvent:
 					actionEvent->x = x;
 					actionEvent->y = y;
+					actionEvent->check = existant;
 					break;
 				case DirectionEvent:
 					dx = actionEvent->dx;
 					dy = actionEvent->dy;
+					break;
+				case HideEvent:
+					existant = false;
+					break;
+				case ShowEvent:
+					existant = true;
 					break;
 				default:
 					break;

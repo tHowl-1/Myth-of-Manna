@@ -1,7 +1,6 @@
 #include "action.h"
-#include "components/physics.h"
-#include "components/render.h"
 #include "mapgen.h"
+#include "entity_types.h"
 #include "logging.h"
 #include "game_exceptions.h"
 
@@ -38,7 +37,7 @@ Validate MapMovementAction::perform()
 
 	// Move player in given direction
 	mapMovementEvent.type = MovementEvent;
-	map->eventPass(&mapMovementEvent);
+	performer->eventPass(&mapMovementEvent);
 	return Validate::VALID;
 }
 
@@ -74,7 +73,7 @@ Validate WorldMovementAction::perform()
 
 	// Move player in given direction
 	worldMovementEvent.type = WorldMovementEvent;
-	world->eventPass(&worldMovementEvent);
+	world->player.eventPass(&worldMovementEvent);
 	return Validate::VALID;
 }
 
@@ -122,13 +121,88 @@ Validate ExitMapAction::perform()
 
 Validate PlaceTileAction::perform()
 {
-	// Get Player Position and Direction
+	// Get Player Performer and Direction
 	Event positionEvent = Event(PositionEvent);
 	performer->eventPass(&positionEvent);
 	int dest_x = positionEvent.x + positionEvent.dx, dest_y = positionEvent.y + positionEvent.dy;
 
 	map->mapTiles[dest_x][dest_y] = woodWall;
 	return Validate::INVALID;
+}
+
+Validate SpawnPotionAction::perform()
+{
+	//Get Performer Position
+	Event positionEvent = Event(PositionEvent);
+	performer->eventPass(&positionEvent);
+
+	map->spawn_entity_copy_at(Potion, positionEvent.x, positionEvent.y);
+	return Validate::VALID;
+}
+
+Validate GrabAction::perform()
+{
+	//Get Performer Position
+	Event positionEvent = Event(PositionEvent);
+	performer->eventPass(&positionEvent);
+	
+	// Fill Inventory
+	Event inventoryFillEvent = Event(FillEvent);
+	inventoryFillEvent.thing = map->get_entity_at_location(positionEvent.x, positionEvent.y);
+	if (inventoryFillEvent.thing != nullptr)
+	{
+		performer->eventPass(&inventoryFillEvent);
+
+		Entity* item = (Entity*)inventoryFillEvent.thing;
+		Event hideEvent = Event(ShowEvent);
+		item->eventPass(&hideEvent);
+	}
+	return Validate::VALID;
+}
+
+Validate DropAction::perform()
+{
+	//Get Performer Position
+	Event positionEvent = Event(PositionEvent);
+	performer->eventPass(&positionEvent);
+
+	Event inventoryIndexRetrieveEvent = Event(IndexRetrieveEvent);
+	inventoryIndexRetrieveEvent.amount = choice;
+	performer->eventPass(&inventoryIndexRetrieveEvent);
+
+	if (inventoryIndexRetrieveEvent.thing != nullptr)
+	{
+		Entity* item = (Entity*)inventoryIndexRetrieveEvent.thing;
+
+		Event showEvent = Event(ShowEvent);
+		item->eventPass(&showEvent);
+
+		positionEvent.type = MovementEvent;
+		item->eventPass(&positionEvent);
+	}
+	return Validate::VALID;
+}
+
+Validate DumpAction::perform()
+{
+	//Get Player Position
+	Event positionEvent = Event(PositionEvent);
+	performer->eventPass(&positionEvent);
+
+	// Fill Inventory
+	Event inventoryRetrieveEvent = Event(RetrieveEvent);
+	performer->eventPass(&inventoryRetrieveEvent);
+	if (inventoryRetrieveEvent.thing != nullptr)
+	{
+		Entity* item = (Entity*)inventoryRetrieveEvent.thing;
+
+		Event showEvent = Event(ShowEvent);
+		item->eventPass(&showEvent);
+		
+		positionEvent.type = MovementEvent;
+		item->eventPass(&positionEvent);
+	}
+	return Validate::VALID;
 }
 
 
