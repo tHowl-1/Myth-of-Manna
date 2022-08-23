@@ -45,7 +45,17 @@ namespace mom
 		HealC heal;
 		InventoryC inventory;
 
-		Entity() {}
+		Entity()
+		{
+			sortPosition = Object;
+			physics = PhysicsC();
+			render = RenderC();
+			description = DescriptionC();
+			world = WorldC();
+			open = OpenC();
+			heal = HealC();
+			inventory = InventoryC();
+		}
 		Entity(
 			RenderPos sortPosition,
 			PhysicsC physics,
@@ -65,6 +75,17 @@ namespace mom
 			heal(heal),
 			inventory(inventory)
 		{}
+		Entity(const Entity& oldEntity)
+		{
+			sortPosition = oldEntity.sortPosition;
+			physics = oldEntity.physics;
+			render = oldEntity.render;
+			description = oldEntity.description;
+			world = oldEntity.world;
+			open = oldEntity.open;
+			heal = oldEntity.heal;
+			inventory = oldEntity.inventory;
+		}
 
 		void eventPass(Event* actionEvent);
 

@@ -80,7 +80,8 @@ namespace mom
 
 		// Monsters + Characters - in scene
 		std::vector<Entity*> activeEntityPointers;
-		std::vector<Entity> staticEntityStorage;
+		int staticEntitySize = 0;
+		Entity staticEntityStorage[MAX_ENTITIES];
 
 		Map();
 		Map(Tile newMapTiles[TILED_SIZE][TILED_SIZE]);

@@ -149,7 +149,8 @@ void TileRender::draw_messages(int x, int y, int h)
 void TileRender::draw_inventory_list(World* world, int x, int y, int h)
 {
 	int position = 0;
-	for (auto item : world->player.inventory.storedEntities) {
+	for (int i = 0; i < world->player.inventory.currentSize; i++) {
+		Entity* item = world->player.inventory.storedEntities[i];
 		tcod::print((*console), { x, y + position }, item->description.name, WHITE, BLACK);
 		position += 2;
 	}

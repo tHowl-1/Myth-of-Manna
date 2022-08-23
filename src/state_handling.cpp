@@ -590,7 +590,7 @@ void InventoryMenu::on_render(TileRender* render, World* activeWorld)
     parentHandler->on_render(render, activeWorld);
     render->draw_panel(54, 1, 41, 32);
     render->draw_screen_text("Inventory", 55, 1);
-    render->draw_inventory_list(activeWorld, 56, 36, 20);
+    render->draw_inventory_list(activeWorld, 56, 3, 20);
 }
 
 

@@ -137,6 +137,7 @@ Validate SpawnPotionAction::perform()
 	performer->eventPass(&positionEvent);
 
 	map->spawn_entity_copy_at(Potion, positionEvent.x, positionEvent.y);
+	MessageLog::getInstance().writeMessage(performer->description.name + " spawns a " + Potion.description.name + "!", WHITE);
 	return Validate::VALID;
 }
 
@@ -149,13 +150,15 @@ Validate GrabAction::perform()
 	// Fill Inventory
 	Event inventoryFillEvent = Event(FillEvent);
 	inventoryFillEvent.thing = map->get_entity_at_location(positionEvent.x, positionEvent.y);
-	if (inventoryFillEvent.thing != nullptr)
+	if (inventoryFillEvent.thing != nullptr && inventoryFillEvent.thing != performer)
 	{
 		performer->eventPass(&inventoryFillEvent);
 
 		Entity* item = (Entity*)inventoryFillEvent.thing;
 		Event hideEvent = Event(ShowEvent);
 		item->eventPass(&hideEvent);
+
+		
 	}
 	return Validate::VALID;
 }

@@ -2,6 +2,7 @@
 
 #include "scene.h"
 #include "entity_types.h"
+#include "game_exceptions.h"
 #include "mapgen.h"
 
 using namespace mom;
@@ -122,23 +123,22 @@ Entity* Map::get_entity_at_location(int x, int y)
 
 void Map::spawn_entity_copy_at(Entity entity, int x, int y)
 {
-	Entity tempEntity = entity;
-	staticEntityStorage.push_back(tempEntity);
-	int position = staticEntityStorage.size() - 1;
-	Entity* newEntity = &(staticEntityStorage[position]);
+	if (staticEntitySize >= MAX_ENTITIES)
+		throw impossible;
+	int index = staticEntitySize;
+	staticEntityStorage[staticEntitySize] = Entity(entity);
+	staticEntitySize++;
 
 	// Instantiate location:
 	Event movementEvent = Event(MovementEvent);
 	movementEvent.x = x;
 	movementEvent.y = y;
-	newEntity->eventPass(&movementEvent);
+	movementEvent.dx = 0;
+	movementEvent.dy = 0;
+	staticEntityStorage[index].eventPass(&movementEvent);
 
 	// Copy pointer to pointer array:
-	activeEntityPointers.push_back(newEntity);
-
-	for (auto entity : activeEntityPointers) {
-		std::cout << entity->description.name << std::endl;
-	}
+	activeEntityPointers.push_back(&(staticEntityStorage[index]));
 }
 
 void Map::sort_entity_pointers_for_rendering()

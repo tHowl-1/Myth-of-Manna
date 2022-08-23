@@ -8,4 +8,4 @@ class ImpossibleAction : public std::exception
 	{
 		return "Impossible Action";
 	}
-} impossible;
+} static impossible;
