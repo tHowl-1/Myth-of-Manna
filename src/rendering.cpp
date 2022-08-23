@@ -1,9 +1,14 @@
-﻿#include "palette.h"
-#include "event.h"
-#include "logging.h"
+﻿#include "rendering.h"
+
 #include <sstream>
 
-#include "rendering.h"
+#include "palette.h"
+#include "logging.h"
+#include "event.h"
+#include "cp_437.h"
+
+#include "entity.h"
+#include "scene.h"
 
 using namespace mom;
 
@@ -17,7 +22,7 @@ void TileRender::draw_entities(Map* map)
 		Event renderEvent = Event(RenderEvent);
 		entity->eventPass(&renderEvent);
 
-		if (renderEvent.check = false)
+		if (renderEvent.check == false)
 			continue;
 
 		world_X = renderEvent.x;
@@ -149,9 +154,8 @@ void TileRender::draw_messages(int x, int y, int h)
 void TileRender::draw_inventory_list(World* world, int x, int y, int h)
 {
 	int position = 0;
-	for (int i = 0; i < world->player.inventory.currentSize; i++) {
-		Entity* item = world->player.inventory.storedEntities[i];
-		tcod::print((*console), { x, y + position }, item->description.name, WHITE, BLACK);
+	for (auto iterator = world->player.inventory.storedEntities.begin(); iterator != world->player.inventory.storedEntities.end(); iterator++) {
+		tcod::print((*console), { x, y + position }, (*iterator)->description.name, WHITE, BLACK);
 		position += 2;
 	}
 }

@@ -4,14 +4,15 @@
 // Dependancies
 #include <string>
 #include <libtcod.hpp>
-#include "cp_437.h"
-#include "entity.h"
-#include "scene.h"
 
 const int MAP_OFFSET = 2;
 
 namespace mom
 {
+	// Forward Declarations
+	class Map;
+	class World;
+
 	// 2D Tile Renderer
 	class TileRender
 	{

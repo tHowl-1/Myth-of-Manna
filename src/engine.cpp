@@ -1,9 +1,14 @@
-﻿#include "palette.h"
-#include <exception>
-#include "logging.h"
+﻿#include <exception>
 
 #include "engine.h"
 
+#include "palette.h"
+#include "logging.h"
+#include "validate.h"
+#include "rendering.h"
+#include "action.h"
+#include "state_handling.h"
+#include "scene.h"
 
 using namespace mom;
 

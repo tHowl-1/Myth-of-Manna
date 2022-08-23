@@ -1,5 +1,10 @@
 #include "state_handling.h"
 
+#include "action.h"
+#include "rendering.h"
+#include "entity.h"
+#include "scene.h"
+
 using namespace mom;
 
 ActionOrHandler* BaseHandler::handle_events(SDL_Event* event, World** activeWorld)

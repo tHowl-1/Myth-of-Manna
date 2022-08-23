@@ -1,6 +1,6 @@
 #pragma once
 
-#include <string>
+#include <list>
 
 #include "../event.h"
 
@@ -17,44 +17,14 @@ namespace mom
 	public:
 		bool null = false;
 
-		Entity storedEntities[MAX_ITEMS];
+		std::list<Entity*> storedEntities;
 		
-		int size;
+		int maxSize;
 
-		int currentSize = 0;
+		InventoryC() : null(true) {}
+		InventoryC(int size) : maxSize((size > MAX_ITEMS) ? MAX_ITEMS : size) {}
+		~InventoryC();
 
-		InventoryC() : null(true)
-		{
-			for (int i = 0; i < MAX_ITEMS; i++) {
-				storedEntities[i] = Entity(nullEntity);
-			}
-		}
-
-		InventoryC(int size) : size((size > MAX_ITEMS) ? MAX_ITEMS : size) {
-			for (int i = 0; i < MAX_ITEMS; i++) {
-				storedEntities[i] = Entity(nullEntity);
-			}
-		}
-
-		void receiveEvent(Event* actionEvent)
-		{
-			switch (actionEvent->type)
-			{
-			case RetrieveEvent:
-				actionEvent->thing = &storedEntities[currentSize - 1];
-				storedEntities[currentSize - 1] = Entity(nullEntity);
-				currentSize--;
-				break;
-			case FillEvent:
-				storedEntities[currentSize] = *(Entity*)actionEvent->thing;
-				currentSize++;
-				break;
-			case IndexRetrieveEvent:
-				// TODO - IMPLEMENT
-				break;
-			default:
-				break;
-			}
-		}
+		void receiveEvent(Event* actionEvent);
 	};
 }

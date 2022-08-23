@@ -5,8 +5,6 @@
 #include <SDL2/SDL.h>
 #include <optional>
 
-#include "event.h"
-
 #include "components/world.h"
 #include "components/physics.h"
 #include "components/render.h"
@@ -31,6 +29,9 @@ const int MAX_MEMBERS = 6;
 
 namespace mom
 {
+	// Forward Declarations
+	class Event;
+
 	class Entity
 	{
 	public:

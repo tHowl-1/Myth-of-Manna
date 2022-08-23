@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <libtcod.hpp>
 
 namespace mom
 {

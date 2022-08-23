@@ -6,15 +6,16 @@ class Map;
 // Dependancies
 #include <libtcod.hpp>
 #include <SDL2/SDL.h>
-#include <map>
-#include <iostream>
 
-#include "entity.h"
-#include "rendering.h"
-#include "action.h"
+#include "scene_comp.h"
 
 namespace mom
 {
+	// Forward Declarations
+	class Action;
+	class TileRender;
+	class World;
+
 	// Game state handler. including: render state, input handling
 	struct ActionOrHandler;
 

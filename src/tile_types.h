@@ -2,8 +2,8 @@
 
 // Dependancies
 #include "palette.h"
-#include "tile.h"
 #include "cp_437.h"
+#include "tile.h"
 
 namespace mom
 {

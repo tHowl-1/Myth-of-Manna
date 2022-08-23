@@ -1,9 +1,17 @@
 #pragma once
 
-#include "entity.h"
-#include "components/world.h"
+#include "palette.h"
+#include "cp_437.h"
+
 #include "components/physics.h"
 #include "components/render.h"
+#include "components/description.h"
+#include "components/world.h"
+#include "components/open.h"
+#include "components/heal.h"
+#include "components/inventory.h"
+
+#include "entity.h"
 
 namespace mom
 {
@@ -46,7 +54,7 @@ namespace mom
 		RenderC(ord("+"), BROWN),
 		DescriptionC("Door", "A sturdy door."),
 		WorldC(),
-		OpenC(ord("\,"), BROWN),
+		OpenC(ord(","), BROWN),
 		HealC(),
 		InventoryC()
 	);

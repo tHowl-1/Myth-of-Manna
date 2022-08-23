@@ -1,8 +1,9 @@
-﻿#include <iostream>
+﻿#include "scene.h"
 
-#include "scene.h"
-#include "entity_types.h"
+#include <iostream>
+
 #include "game_exceptions.h"
+#include "entity_types.h"
 #include "mapgen.h"
 
 using namespace mom;
@@ -110,12 +111,12 @@ World::~World()
 	}
 }
 
-Entity* Map::get_entity_at_location(int x, int y)
+Entity* Map::get_entity_at_location(Entity* self, int x, int y)
 {
 	for (auto entity : activeEntityPointers) {
 		Event positionEvent = Event(PositionEvent);
 		entity->eventPass(&positionEvent);
-		if (positionEvent.x == x && positionEvent.y == y)
+		if (positionEvent.x == x && positionEvent.y == y && entity != self)
 			return entity;
 	}
 	return nullptr;
@@ -123,11 +124,7 @@ Entity* Map::get_entity_at_location(int x, int y)
 
 void Map::spawn_entity_copy_at(Entity entity, int x, int y)
 {
-	if (staticEntitySize >= MAX_ENTITIES)
-		throw impossible;
-	int index = staticEntitySize;
-	staticEntityStorage[staticEntitySize] = Entity(entity);
-	staticEntitySize++;
+	staticEntityStorage.push_back(Entity(entity));
 
 	// Instantiate location:
 	Event movementEvent = Event(MovementEvent);
@@ -135,15 +132,15 @@ void Map::spawn_entity_copy_at(Entity entity, int x, int y)
 	movementEvent.y = y;
 	movementEvent.dx = 0;
 	movementEvent.dy = 0;
-	staticEntityStorage[index].eventPass(&movementEvent);
+	staticEntityStorage.back().eventPass(&movementEvent);
 
 	// Copy pointer to pointer array:
-	activeEntityPointers.push_back(&(staticEntityStorage[index]));
+	activeEntityPointers.push_back(&(staticEntityStorage.back()));
 }
 
 void Map::sort_entity_pointers_for_rendering()
 {
-	std::sort(activeEntityPointers.begin(), activeEntityPointers.end(), [](Entity* a, Entity* b) {
+	activeEntityPointers.sort([](Entity* a, Entity* b) {
 		return a->sortPosition < b->sortPosition;
-	});
+		}); 
 }

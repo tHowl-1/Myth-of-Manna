@@ -2,8 +2,8 @@
 
 // Dependancies
 #include <vector>
-#include <unordered_map>
-#include <random>
+#include <list>
+
 #include "tile.h"
 #include "tile_types.h"
 #include "entity.h"
@@ -22,55 +22,6 @@ const float riverLevel = 0.8f;
 
 namespace mom
 {
-	struct TilePosition
-	{
-		int x;
-		int y;
-
-		int id;
-
-		TilePosition() : x(0), y(0), id(0) {}
-		TilePosition(int x, int y, int id) : x(x), y(y), id(id) {}
-	};
-
-	struct PathTile
-	{
-		bool river;
-		bool path;
-		bool road;
-	};
-
-	struct Params
-	{
-		// World Generation Paramaters:
-		bool island = true;
-		bool polar = true;
-		bool roads = true;
-		bool rivers = true;
-
-		float population = 1.0f;
-
-		float height = 1.0f;
-		float temperature = 1.0f;
-		float roughness = 1.0f;
-		float moisture = 1.0f;
-		float sealevel = 1.0f;
-
-		Params() {}
-		Params(const Params& oldParams)
-		{
-			island = oldParams.island;
-			polar = oldParams.polar;
-			roads = oldParams.roads;
-			population = oldParams.population;
-			rivers = oldParams.rivers;
-			height = oldParams.height;
-			temperature = oldParams.temperature;
-			roughness = oldParams.roughness;
-			sealevel = oldParams.sealevel;
-			
-		}
-	};
 
 	//Entity and tile container
 	class Map
@@ -78,15 +29,14 @@ namespace mom
 	public:
 		Tile mapTiles[TILED_SIZE][TILED_SIZE];
 
-		// Monsters + Characters - in scene
-		std::vector<Entity*> activeEntityPointers;
-		int staticEntitySize = 0;
-		Entity staticEntityStorage[MAX_ENTITIES];
+		// Monsters + Characters + items- in scene
+		std::list<Entity*> activeEntityPointers;
+		std::list<Entity> staticEntityStorage;
 
 		Map();
 		Map(Tile newMapTiles[TILED_SIZE][TILED_SIZE]);
 
-		Entity* get_entity_at_location(int x, int y);
+		Entity* get_entity_at_location(Entity* self, int x, int y);
 		void sort_entity_pointers_for_rendering();
 		void spawn_entity_copy_at(Entity entity, int x, int y);
 		void eventPass(Event* actionEvent);

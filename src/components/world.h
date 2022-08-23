@@ -1,7 +1,5 @@
 #pragma once
 
-#include <string>
-
 #include "../event.h"
 
 using namespace mom;

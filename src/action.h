@@ -2,12 +2,16 @@
 
 // Dependancies
 #include "validate.h"
-#include "entity.h"
 #include "event.h"
-#include "scene.h"
 
 namespace mom
 {
+	// Forward Declarations
+	class World;
+	class Params;
+	class Map;
+	class Entity;
+
 	// --------------------------------------------------------------------------
 	//                               GENERIC ACTIONS
 	// --------------------------------------------------------------------------

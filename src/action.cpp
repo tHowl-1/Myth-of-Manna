@@ -1,4 +1,8 @@
 #include "action.h"
+
+#include "entity.h"
+#include "scene.h"
+#include "scene_comp.h"
 #include "mapgen.h"
 #include "entity_types.h"
 #include "logging.h"
@@ -143,30 +147,52 @@ Validate SpawnPotionAction::perform()
 
 Validate GrabAction::perform()
 {
-	//Get Performer Position
+	// Get Performer Position
 	Event positionEvent = Event(PositionEvent);
 	performer->eventPass(&positionEvent);
 	
 	// Fill Inventory
 	Event inventoryFillEvent = Event(FillEvent);
-	inventoryFillEvent.thing = map->get_entity_at_location(positionEvent.x, positionEvent.y);
-	if (inventoryFillEvent.thing != nullptr && inventoryFillEvent.thing != performer)
+	inventoryFillEvent.thing = map->get_entity_at_location(performer, positionEvent.x, positionEvent.y);
+	if (inventoryFillEvent.thing != nullptr)
 	{
+		if (performer->inventory.storedEntities.size() >= performer->inventory.maxSize) {
+			MessageLog::getInstance().writeMessage(performer->description.name + "'s inventory is full!", WHITE);
+			return Validate::INVALID;
+		}
+
 		performer->eventPass(&inventoryFillEvent);
 
+		// Emplace element into inventory
 		Entity* item = (Entity*)inventoryFillEvent.thing;
 		Event hideEvent = Event(ShowEvent);
 		item->eventPass(&hideEvent);
 
-		
+		MessageLog::getInstance().writeMessage(performer->description.name + " picks up " + item->description.name, WHITE);
+
+		// Remove element from active and static storage
+		for (auto iterator = map->activeEntityPointers.begin(); iterator != map->activeEntityPointers.end(); iterator++) {
+			if (*iterator == item) {
+				map->activeEntityPointers.erase(iterator);
+				break;
+			}
+		}
+		for (auto iterator = map->staticEntityStorage.begin(); iterator != map->staticEntityStorage.end(); iterator++) {
+			if (&(*iterator) == item) {
+				map->staticEntityStorage.erase(iterator);
+				break;
+			}
+		}
+		return Validate::VALID;
 	}
-	return Validate::VALID;
+	MessageLog::getInstance().writeMessage("Nothing to pick up!", WHITE);
+	return Validate::INVALID;
 }
 
 Validate DropAction::perform()
 {
 	//Get Performer Position
-	Event positionEvent = Event(PositionEvent);
+	/*Event positionEvent = Event(PositionEvent);
 	performer->eventPass(&positionEvent);
 
 	Event inventoryIndexRetrieveEvent = Event(IndexRetrieveEvent);
@@ -182,29 +208,29 @@ Validate DropAction::perform()
 
 		positionEvent.type = MovementEvent;
 		item->eventPass(&positionEvent);
-	}
+	}*/
 	return Validate::VALID;
 }
 
 Validate DumpAction::perform()
 {
 	//Get Player Position
-	Event positionEvent = Event(PositionEvent);
-	performer->eventPass(&positionEvent);
+	//Event positionEvent = Event(PositionEvent);
+	//performer->eventPass(&positionEvent);
 
-	// Fill Inventory
-	Event inventoryRetrieveEvent = Event(RetrieveEvent);
-	performer->eventPass(&inventoryRetrieveEvent);
-	if (inventoryRetrieveEvent.thing != nullptr)
-	{
-		Entity* item = (Entity*)inventoryRetrieveEvent.thing;
+	//// Fill Inventory
+	//Event inventoryRetrieveEvent = Event(RetrieveEvent);
+	//performer->eventPass(&inventoryRetrieveEvent);
+	//if (inventoryRetrieveEvent.thing != nullptr)
+	//{
+	//	Entity* item = (Entity*)inventoryRetrieveEvent.thing;
 
-		Event showEvent = Event(ShowEvent);
-		item->eventPass(&showEvent);
-		
-		positionEvent.type = MovementEvent;
-		item->eventPass(&positionEvent);
-	}
+	//	Event showEvent = Event(ShowEvent);
+	//	item->eventPass(&showEvent);
+	//	
+	//	positionEvent.type = MovementEvent;
+	//	item->eventPass(&positionEvent);
+	//}
 	return Validate::VALID;
 }
 
