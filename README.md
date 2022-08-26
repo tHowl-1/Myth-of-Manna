@@ -1,6 +1,10 @@
 # Myth-of-Manna
 A long term C++ libtcod roguelike game project to learn more about managing a large project.
 
+DEMO:
+
+https://user-images.githubusercontent.com/92053987/186950370-0f33bc44-7c4a-4c83-91e3-b6629bb12513.mp4
+
 BUILD:
 
 Builds using CMake requires libtcod to run. It can be downloaded using vcpkg and built on visual studio.
