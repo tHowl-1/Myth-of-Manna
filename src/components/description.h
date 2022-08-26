@@ -5,6 +5,9 @@
 #include "../event.h"
 
 using namespace mom;
+/// <summary>
+/// The description component holds information about the entities name/description.
+/// </summary>
 
 namespace mom
 {

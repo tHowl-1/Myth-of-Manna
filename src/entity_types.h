@@ -13,6 +13,10 @@
 
 #include "entity.h"
 
+/// <summary>
+/// Static entity representations of certain entity types because I have yet to implement json parsing.
+/// </summary>
+
 namespace mom
 {
 	static Entity nullEntity = Entity(

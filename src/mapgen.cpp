@@ -4,6 +4,8 @@
 #include "scene_comp.h"
 #include "scene.h"
 
+// TODO - This file is hideous and needs a lot of work. For now it works reliably despite its issues.
+
 TCODHeightMap* MapGenerator::generateGradient(bool north, bool east, bool south, bool west, bool invert)
 {
 	int xM = 2;

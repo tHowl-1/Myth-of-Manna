@@ -3,6 +3,10 @@
 #include <string>
 #include <libtcod.hpp>
 
+/// <summary>
+/// The main event class stores interim information passed between entities and actions.
+/// </summary>
+
 namespace mom
 {
 	enum EventType

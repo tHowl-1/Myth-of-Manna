@@ -9,6 +9,10 @@ class Map;
 
 #include "scene_comp.h"
 
+/// <summary>
+/// The state handler represents a combination of both input/game state with rendering. Only 1 handler can be active at a time within the engine class.
+/// </summary>
+
 namespace mom
 {
 	// Forward Declarations

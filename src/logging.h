@@ -5,6 +5,10 @@
 #include <libtcod.hpp>
 #include "palette.h"
 
+/// <summary>
+/// Singleton handles all ingame console messages. Accessible from everywhere in the program with no depedencies.
+/// </summary>
+
 namespace mom
 {
 	struct Message

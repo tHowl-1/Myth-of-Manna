@@ -3,6 +3,10 @@
 #include <string>
 #include <unordered_map>
 
+/// <summary>
+/// CP_437 is a compiled representation of the code point 437 ascii symbol set.
+/// </summary>
+
 const static std::unordered_map<std::string, int> CP_437(
 {
 	{"\x00", 0x00}, // 0

@@ -8,6 +8,10 @@
 const int CON_W = 96, CON_H = 54;
 const int SCREEN_W = CON_W * 16, SCREEN_H = CON_H * 16;
 
+/// <summary>
+/// The engine class is the core game class that handles information passed to all other components of the game and the core game loop
+/// </summary>
+
 namespace mom
 {
 	// Forward Declarations
@@ -35,8 +39,10 @@ namespace mom
 
 		~Engine();
 
+		// This function handles all ingame action and handler changing
 		void validate_action(ActionOrHandler* actionOrHandler);
 
+		// Core update function happens every game loop
 		void update();
 		
 	};

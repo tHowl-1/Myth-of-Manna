@@ -4,6 +4,10 @@
 
 using namespace mom;
 
+/// <summary>
+/// The physics component contains the vital information surrounding entity position collision and existance.
+/// </summary>
+
 namespace mom
 {
 	class PhysicsC

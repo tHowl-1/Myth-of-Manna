@@ -13,6 +13,10 @@
 #include "components/inventory.h"
 #include "components/description.h"
 
+/// <summary>
+/// The entity class is the main representation of items, objects, and actors in the game.
+/// </summary>
+
 enum RenderPos:char
 {
 	Object,

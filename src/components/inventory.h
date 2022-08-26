@@ -8,6 +8,10 @@ const int MAX_ITEMS = 10;
 
 using namespace mom;
 
+/// <summary>
+/// The inventory component stores other entities that can be retrieved and added to.
+/// </summary>
+
 namespace mom
 {
 	class Entity;

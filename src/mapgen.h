@@ -5,6 +5,10 @@
 
 #include "tile.h"
 
+/// <summary>
+/// The Map Generator class handles the tile, location, and entity generation for both maps and the encompassing world
+/// </summary>
+
 namespace mom
 {
 	class World;

@@ -4,6 +4,10 @@
 
 using namespace mom;
 
+/// <summary>
+/// The render component contains rendering information to be rendered onto the console.
+/// </summary>
+
 namespace mom
 {
 	class RenderC

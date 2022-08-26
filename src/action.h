@@ -4,6 +4,10 @@
 #include "validate.h"
 #include "event.h"
 
+/// <summary>
+/// Actions represent any and all in game decisions. Including quitting, moving, picking up items, and attacking
+/// </summary>
+
 namespace mom
 {
 	// Forward Declarations

@@ -5,6 +5,10 @@
 #include <string>
 #include <libtcod.hpp>
 
+/// <summary>
+/// Core rendering class stores all rendering functions to be accessed by the state handler.
+/// </summary>
+
 const int MAP_OFFSET = 2;
 
 namespace mom

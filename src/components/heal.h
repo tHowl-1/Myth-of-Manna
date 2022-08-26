@@ -4,6 +4,10 @@
 
 using namespace mom;
 
+/// <summary>
+/// The heal component contains information and how to handle if this entity has healing capabilities
+/// </summary>
+
 namespace mom
 {
 	class HealC

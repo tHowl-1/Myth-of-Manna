@@ -4,6 +4,10 @@
 
 using namespace mom;
 
+/// <summary>
+/// The world component is the world counterpart to the physics component. It also handles entering and leaving maps.
+/// </summary>
+
 namespace mom
 {
 	class WorldC
