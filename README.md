@@ -10,15 +10,18 @@ PURPOSE:
 The goal of this project was to learn about how to organize large object oriented projects and to gain practice coding in c++. Ultimately, I think some parts of the code are rough and could use a lot more work but I have learned a lot since starting this project. All code was written by me and is my original work. I have taken program architecture inspiration from a variety of sources including the python tcod tutorial project and a few online talks by game developers.
 
 A few things I implemented are:
+
 Singleton - Message logging to ingame console
+
 Event and component system - to allow large variation and interesting behavior in game actions
+
 State Handling - couples game state and rendering
 
 
 FEATURES:
 
 Includes basic world generation, movement, collisions, and action handling for a simple roguelike game. Additionally, entity interactions are handled using a component and event system. Rendering is handled using libtcod and prints ascii characters onto the console. The game also features a newly added inventory system.
-
+The '@' symbol represents the player character on screen.
 
 WORLD GEN:
 
