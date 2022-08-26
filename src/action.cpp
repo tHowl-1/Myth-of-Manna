@@ -191,6 +191,7 @@ Validate GrabAction::perform()
 
 Validate DropAction::perform()
 {
+	// TODO - FIX IMPLEMENTATION
 	//Get Performer Position
 	/*Event positionEvent = Event(PositionEvent);
 	performer->eventPass(&positionEvent);
@@ -214,6 +215,7 @@ Validate DropAction::perform()
 
 Validate DumpAction::perform()
 {
+	// TODO - FIX IMPLEMENTATION
 	//Get Player Position
 	//Event positionEvent = Event(PositionEvent);
 	//performer->eventPass(&positionEvent);
