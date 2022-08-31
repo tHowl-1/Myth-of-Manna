@@ -1,11 +1,17 @@
 
-
-Entity Components:
-	-ai
-	-light
-	-inventory
-	-consumable
-	-equippable
-	-body -> parts
-	-shape/material
-	
+TODO list:
+1. Rudimentary ai task/state handling
+2. Map feature generation
+	a. classic bsp dungeon
+	b. house/castle generator
+	c. cellular automata cave generation
+	d. maze generation
+	e. ruin generation
+3. Entity Spwaning system
+4. Name generation
+5. Time keeping
+6. Fire/Weather
+7. Talk/trade/quests
+8. World/map traversal
+9. Fill out items/enemies/objects
+10. Build to emscripten post on gitlab
