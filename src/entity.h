@@ -12,6 +12,7 @@
 #include "components/heal.h"
 #include "components/inventory.h"
 #include "components/description.h"
+#include "components/stats.h"
 
 /// <summary>
 /// The entity class is the main representation of items, objects, and actors in the game.
@@ -28,8 +29,6 @@ enum RenderPos:char
 const int MAX_MEMBERS = 6;
 
 //Ai*			ai				= nullptr;
-//Inventory*	inventory		= nullptr;
-//Soul*			soul			= nullptr;
 
 namespace mom
 {
@@ -49,6 +48,8 @@ namespace mom
 		OpenC open;
 		HealC heal;
 		InventoryC inventory;
+		StatsC stats;
+
 
 		Entity()
 		{
@@ -60,6 +61,7 @@ namespace mom
 			open = OpenC();
 			heal = HealC();
 			inventory = InventoryC();
+			stats = StatsC();
 		}
 		Entity(
 			RenderPos sortPosition,
@@ -69,7 +71,8 @@ namespace mom
 			WorldC world,
 			OpenC open,
 			HealC heal,
-			InventoryC inventory)
+			InventoryC inventory,
+			StatsC stats)
 			:
 			sortPosition(sortPosition),
 			physics(physics),
@@ -78,7 +81,8 @@ namespace mom
 			world(world),
 			open(open),
 			heal(heal),
-			inventory(inventory)
+			inventory(inventory),
+			stats(stats)
 		{}
 		Entity(const Entity& oldEntity)
 		{
@@ -90,6 +94,7 @@ namespace mom
 			open = oldEntity.open;
 			heal = oldEntity.heal;
 			inventory = oldEntity.inventory;
+			stats = oldEntity.stats;
 		}
 
 		void eventPass(Event* actionEvent);

@@ -28,11 +28,12 @@ namespace mom
 		InteractEvent,
 		NameEvent,
 		DescribeEvent,
-		RetrieveEvent,
 		FillEvent,
 		HideEvent,
 		ShowEvent,
-		IndexRetrieveEvent
+		IndexRetrieveEvent,
+		HealEvent,
+		DamageEvent
 	};
 
 	class Event

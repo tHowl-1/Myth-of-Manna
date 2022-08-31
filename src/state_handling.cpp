@@ -79,11 +79,12 @@ ActionOrHandler* MapView::handle_events(SDL_Event* event, World** activeWorld)
 
             case SDLK_g:
                 return newAction(new GrabAction(&(*activeWorld)->player, (*activeWorld)->get_active_map()));
-            case SDLK_d:
-                return newAction(new DumpAction(&(*activeWorld)->player, (*activeWorld)->get_active_map()));
 
             case SDLK_p:
                 return newAction(new SpawnPotionAction(&(*activeWorld)->player, (*activeWorld)->get_active_map()));
+
+            case SDLK_x:
+                return newAction(new DebugDamageAction(&(*activeWorld)->player, (*activeWorld)->get_active_map()));
 
             case SDLK_i:
                 return newHandler(new InventoryMenu(new MapView));
@@ -117,7 +118,8 @@ void MapView::on_render(TileRender* render, World* activeWorld)
     render->draw_map_tiles(activeWorld->get_active_map(), 0);
     render->draw_entities(activeWorld->get_active_map());
     render->draw_messages(55, 51, 16);
-	return;
+    render->draw_screen_text("HP:", 56, 3);
+    render->draw_progress_bar((*activeWorld).player.stats.health, (*activeWorld).player.stats.maxHealth, 59, 3, RED);
 }
 
 ActionOrHandler* WorldView::handle_events(SDL_Event* event, World** activeWorld)
@@ -170,6 +172,8 @@ void WorldView::on_render(TileRender* render, World* activeWorld)
 
 void Menu::upChoice(int numChoices)
 {
+    if (numChoices == 0)
+        return;
     choice--;
     if (choice < 0)
         choice = numChoices - 1;
@@ -177,6 +181,8 @@ void Menu::upChoice(int numChoices)
 
 void Menu::downChoice(int numChoices)
 {
+    if (numChoices == 0)
+        return;
     choice++;
     if (choice > numChoices - 1)
         choice = 0;
@@ -413,17 +419,17 @@ void NewGame::on_render(TileRender* render, World* activeWorld)
     render->draw_screen_text("Roads", middle, 18);
     render->draw_check_box(params.roads, middle + x_offset, 18);
     render->draw_screen_text("Population", middle, 20);
-    render->draw_progress_bar(params.population - 0.3f, middle + x_offset - 3, 20, 7);
+    render->draw_progress_bar(int(((params.population - 0.6f) / 0.8f) * 5) + 1, 5, middle + x_offset, 20, WHITE);
     render->draw_screen_text("Temperature", middle, 22);
-    render->draw_progress_bar(params.temperature - 0.3f, middle + x_offset - 3, 22, 7);
+    render->draw_progress_bar(int(((params.temperature - 0.6f) / 0.8f) * 5) + 1, 5, middle + x_offset, 22, WHITE);
     render->draw_screen_text("Moisture", middle, 24);
-    render->draw_progress_bar(params.moisture - 0.3f, middle + x_offset - 3, 24, 7);
+    render->draw_progress_bar(int(((params.moisture- 0.6f) / 0.8f) * 5) + 1, 5, middle + x_offset, 24, WHITE);
     render->draw_screen_text("Roughness", middle, 26);
-    render->draw_progress_bar(params.roughness - 0.3f, middle + x_offset - 3, 26, 7);
+    render->draw_progress_bar(int(((params.roughness - 0.6f) / 0.8f) * 5) + 1, 5, middle + x_offset, 26, WHITE);
     render->draw_screen_text("Height", middle, 28);
-    render->draw_progress_bar(params.height - 0.3f, middle + x_offset - 3, 28, 7);
+    render->draw_progress_bar(int(((params.height - 0.6f) / 0.8f) * 5) + 1, 5, middle + x_offset, 28, WHITE);
     render->draw_screen_text("Sea Level", middle, 30);
-    render->draw_progress_bar(params.sealevel - 0.3f, middle + x_offset - 3, 30, 7);
+    render->draw_progress_bar(int(((params.sealevel - 0.6f) / 0.8f) * 5) + 1, 5, middle + x_offset, 30, WHITE);
     render->draw_screen_text("Re-Roll", middle, 32);
     render->draw_screen_text("Begin", middle, 34);
     render->draw_menu_marker(choice, middle, 12, 2);
@@ -562,20 +568,15 @@ ActionOrHandler* InventoryMenu::handle_events(SDL_Event* event, World** activeWo
         switch (event->key.keysym.sym) // Check key type
         {
         case SDLK_UP:
-            upChoice(1);
+            upChoice((*activeWorld)->player.inventory.storedEntities.size());
             break;
         case SDLK_DOWN:
-            downChoice(1);
+            downChoice((*activeWorld)->player.inventory.storedEntities.size());
             break;
-        case SDLK_RETURN:
-            switch (choice)
-            {
-            case 0: // <- MENU OPTIONS HERE
-                break;
-            default:
-                break;
-            }
-            break;
+        case SDLK_d:
+            return newAction(new DropAction(&(*activeWorld)->player, (*activeWorld)->get_active_map(), choice));
+        case SDLK_c:
+            return newAction(new ConsumeAction(&(*activeWorld)->player, (*activeWorld)->get_active_map(), choice));
         case SDLK_ESCAPE:
             return newHandler(parentHandler);
         default:
@@ -595,7 +596,8 @@ void InventoryMenu::on_render(TileRender* render, World* activeWorld)
     parentHandler->on_render(render, activeWorld);
     render->draw_panel(54, 1, 41, 32);
     render->draw_screen_text("Inventory", 55, 1);
-    render->draw_inventory_list(activeWorld, 56, 3, 20);
+    render->draw_inventory_list(activeWorld, 58, 3, 20);
+    render->draw_menu_marker(choice, 58, 3, 2);
 }
 
 

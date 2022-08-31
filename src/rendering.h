@@ -49,7 +49,7 @@ namespace mom
 		// Draws check box given bool value
 		void draw_check_box(bool value, int x, int y);
 		// Draws progress bar at screen coords
-		void draw_progress_bar(float value, int x, int y, int w);
+		void draw_progress_bar(int value, int max, int x, int y, tcod::ColorRGB color);
 
 		void draw_panel(int x, int y, int w, int h);
 

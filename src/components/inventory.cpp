@@ -13,17 +13,22 @@ void InventoryC::receiveEvent(Event* actionEvent)
 {
 	switch (actionEvent->type)
 	{
-	/*case RetrieveEvent:
-		actionEvent->thing = &storedEntities;
-		break;*/
 	case FillEvent:
+	{
 		if (storedEntities.size() >= maxSize)
 			break;
 		storedEntities.push_back(new Entity(*(Entity*)actionEvent->thing));
 		break;
+	}
 	case IndexRetrieveEvent:
-		// TODO - IMPLEMENT
+	{
+		auto itr = storedEntities.begin();
+		if (actionEvent->amount < storedEntities.size()) {
+			std::advance(itr, actionEvent->amount);
+			actionEvent->thing = *itr;
+		}
 		break;
+	}
 	default:
 		break;
 	}

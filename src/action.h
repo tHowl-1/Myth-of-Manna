@@ -118,6 +118,14 @@ namespace mom
 		MapActionWithDirection(Entity* performer, Map* activeMap, int dx, int dy) : MapAction(performer, activeMap), dx(dx), dy(dy) {}
 	};
 
+	class InventoryAction : public MapAction
+	{
+	public:
+		int choice;
+
+		InventoryAction(Entity* performer, Map* activeMap, int choice) : MapAction(performer, activeMap), choice(choice) {}
+	};
+
 	class PlaceTileAction : public MapAction
 	{
 	public:
@@ -156,19 +164,10 @@ namespace mom
 		Validate perform();
 	};
 
-	class DropAction : public MapAction
+	class DropAction : public InventoryAction
 	{
 	public:
-		int choice;
-
-		DropAction(Entity* performer, Map* activeMap, int choice) : MapAction(performer, activeMap), choice(choice) {}
-		Validate perform();
-	};
-
-	class DumpAction : public MapAction
-	{
-	public:
-		DumpAction(Entity* performer, Map* activeMap) : MapAction(performer, activeMap) {}
+		DropAction(Entity* performer, Map* activeMap, int choice) : InventoryAction(performer, activeMap, choice) {}
 		Validate perform();
 	};
 
@@ -176,6 +175,20 @@ namespace mom
 	{
 	public:
 		SpawnPotionAction(Entity* performer, Map* activeMap) : MapAction(performer, activeMap) {}
+		Validate perform();
+	};
+	
+	class ConsumeAction : public InventoryAction
+	{
+	public:
+		ConsumeAction(Entity* performer, Map* activeMap, int choice) : InventoryAction(performer, activeMap, choice) {}
+		Validate perform();
+	};
+
+	class DebugDamageAction : public MapAction
+	{
+	public:
+		DebugDamageAction(Entity* performer, Map* activeMap) : MapAction(performer, activeMap) {}
 		Validate perform();
 	};
 	

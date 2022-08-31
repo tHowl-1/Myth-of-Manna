@@ -27,7 +27,8 @@ namespace mom
 		WorldC(),
 		OpenC(),
 		HealC(),
-		InventoryC()
+		InventoryC(),
+		StatsC()
 	);
 
 	static Entity Player = Entity(
@@ -38,7 +39,8 @@ namespace mom
 		WorldC(0, 0, false),
 		OpenC(),
 		HealC(),
-		InventoryC(5)
+		InventoryC(5),
+		StatsC(10)
 	);
 
 	static Entity Goblin = Entity(
@@ -49,7 +51,8 @@ namespace mom
 		WorldC(),
 		OpenC(),
 		HealC(),
-		InventoryC()
+		InventoryC(),
+		StatsC(5)
 	);
 
 	static Entity Door = Entity(
@@ -60,7 +63,8 @@ namespace mom
 		WorldC(),
 		OpenC(ord(","), BROWN),
 		HealC(),
-		InventoryC()
+		InventoryC(),
+		StatsC()
 	);
 
 	static Entity Potion = Entity(
@@ -71,7 +75,8 @@ namespace mom
 		WorldC(),
 		OpenC(),
 		HealC(10),
-		InventoryC()
+		InventoryC(),
+		StatsC()
 	);
 
 }

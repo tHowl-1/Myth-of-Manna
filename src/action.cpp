@@ -191,48 +191,87 @@ Validate GrabAction::perform()
 
 Validate DropAction::perform()
 {
-	// TODO - FIX IMPLEMENTATION
 	//Get Performer Position
-	/*Event positionEvent = Event(PositionEvent);
+	Event positionEvent = Event(PositionEvent);
 	performer->eventPass(&positionEvent);
 
+	// Remove from inventory
 	Event inventoryIndexRetrieveEvent = Event(IndexRetrieveEvent);
 	inventoryIndexRetrieveEvent.amount = choice;
 	performer->eventPass(&inventoryIndexRetrieveEvent);
-
 	if (inventoryIndexRetrieveEvent.thing != nullptr)
 	{
 		Entity* item = (Entity*)inventoryIndexRetrieveEvent.thing;
 
+		// Show item
 		Event showEvent = Event(ShowEvent);
 		item->eventPass(&showEvent);
 
-		positionEvent.type = MovementEvent;
-		item->eventPass(&positionEvent);
-	}*/
-	return Validate::VALID;
+		// Add new item copy into active and static storage
+		map->spawn_entity_copy_at(*item, positionEvent.x, positionEvent.y);
+
+		MessageLog::getInstance().writeMessage(performer->description.name + " drops " + item->description.name, WHITE);
+
+		// Remove item from inventory
+		auto& inv = performer->inventory;
+		for (auto itr = inv.storedEntities.begin(); itr != inv.storedEntities.end(); itr++) {
+			if (*itr == item) {
+				inv.storedEntities.erase(itr);
+				delete item;
+				break;
+			}
+		}
+		return Validate::VALID;
+	}
+	MessageLog::getInstance().writeMessage("Nothing to drop!", WHITE);
+	return Validate::INVALID;
 }
 
-Validate DumpAction::perform()
+Validate ConsumeAction::perform()
 {
-	// TODO - FIX IMPLEMENTATION
-	//Get Player Position
-	//Event positionEvent = Event(PositionEvent);
-	//performer->eventPass(&positionEvent);
+	// Get target entity
+	Event inventoryIndexRetrieveEvent = Event(IndexRetrieveEvent);
+	inventoryIndexRetrieveEvent.amount = choice;
+	performer->eventPass(&inventoryIndexRetrieveEvent);
+	if (inventoryIndexRetrieveEvent.thing != nullptr)
+	{
+		Entity* item = (Entity*)inventoryIndexRetrieveEvent.thing;
+		
+		// Consume item
+		Event consumeEvent = Event(ConsumeEvent);
+		item->eventPass(&consumeEvent);
 
-	//// Fill Inventory
-	//Event inventoryRetrieveEvent = Event(RetrieveEvent);
-	//performer->eventPass(&inventoryRetrieveEvent);
-	//if (inventoryRetrieveEvent.thing != nullptr)
-	//{
-	//	Entity* item = (Entity*)inventoryRetrieveEvent.thing;
+		Event healEvent = Event(HealEvent);
+		healEvent.amount = consumeEvent.amount;
+		performer->eventPass(&healEvent);
 
-	//	Event showEvent = Event(ShowEvent);
-	//	item->eventPass(&showEvent);
-	//	
-	//	positionEvent.type = MovementEvent;
-	//	item->eventPass(&positionEvent);
-	//}
+		MessageLog::getInstance().writeMessage(performer->description.name + " consumes " + item->description.name, WHITE);
+
+		// Remove item from inventory
+		auto& inv = performer->inventory;
+		for (auto itr = inv.storedEntities.begin(); itr != inv.storedEntities.end(); itr++) {
+			if (*itr == item) {
+				inv.storedEntities.erase(itr);
+				delete item;
+				break;
+			}
+		}
+
+		return Validate::VALID;
+	}
+
+	MessageLog::getInstance().writeMessage("Nothing to consume!", WHITE);
+	return Validate::INVALID;
+}
+
+Validate DebugDamageAction::perform()
+{
+	// Damage Player
+	Event damageEvent = Event(DamageEvent);
+	damageEvent.amount = 1;
+	performer->eventPass(&damageEvent);
+
+	MessageLog::getInstance().writeMessage(performer->description.name + " takes " + std::to_string(damageEvent.amount) + " damage!", WHITE);
 	return Validate::VALID;
 }
 

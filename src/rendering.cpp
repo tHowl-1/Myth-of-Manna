@@ -114,22 +114,18 @@ void TileRender::draw_check_box(bool value, int x, int y)
 		console->at(screen_X, screen_Y).ch = ord("•");
 }
 
-void TileRender::draw_progress_bar(float value, int x, int y, int w)
+void TileRender::draw_progress_bar(int value, int max, int x, int y, tcod::ColorRGB color)
 {
 	int screen_X = x;
 	int screen_Y = y;
-	console->at(screen_X, screen_Y).ch = ord("[");
-	console->at(screen_X, screen_Y).fg = WHITE;
-	for (int i = 1; i < w - 1; i++)
+	for (int i = 0; i < max; i++)
 	{
-		console->at(screen_X + i, screen_Y).fg = WHITE; 
-		if (i <= int(value * (w - 2))) //
+		console->at(screen_X + i, screen_Y).fg = color; 
+		if (i <= value - 1)
 			console->at(screen_X + i, screen_Y).ch = ord("■");
 		else
 			console->at(screen_X + i, screen_Y).ch = ord("·");
 	}
-	console->at(screen_X + w - 1, screen_Y).ch = ord("]");
-	console->at(screen_X + w - 1, screen_Y).fg = WHITE;
 }
 
 void TileRender::draw_panel(int x, int y, int w, int h)

@@ -18,4 +18,6 @@ void Entity::eventPass(Event* actionEvent)
 		heal.receiveEvent(actionEvent);
 	if (!inventory.null)
 		inventory.receiveEvent(actionEvent);
+	if (!stats.null)
+		stats.receiveEvent(actionEvent);
 }
